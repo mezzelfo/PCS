@@ -1,0 +1,5 @@
+
+.DS_Store
+*.out
+*.pyc
+PCSpylaib01/venv/
