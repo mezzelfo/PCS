@@ -1,58 +1,103 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
+// Definizione della struttura di ogni riga
 typedef struct s {
 	int n;
 	float f;
-	char c[6+1];
-} myStruct;
+	char c[6+1]; //Stringa al più di 6 caratteri
+} DatiRiga;
 
 int main(int argc, char** argv)
 {
-	FILE* fp;
+	// Variabili
+	FILE* fp;			// Puntatore a file. Usato sia per input che output
+	int dim;			// Numero di celle allocate del vettore
+	int riga;			// Numero di righe lette
+	int i;				// Variabile di ciclo
+	DatiRiga e;			// Elemento d'appoggio
+	DatiRiga* vett;		// Vettore dove immagazzinare i dati
+
+	// Inizializzazione Variabili
+	dim = 4;			// Numero stimato di righe. Se necessita, raddoppio
+	riga = 0;			// All'inizio ho letto 0 righe...
+
+	// Istruzioni
+	// Apro il file di input in modalità lettura
 	fp = fopen("data_es2_input","r");
+
+	// Controllo se l'apertura sia andata a buon fine. In caso negativo esco
 	if (fp==NULL)
 	{
-		fprintf(stderr, "Errore nell'apertura del file\n");
+		fprintf(stderr, "Apertura file non riuscita\n");
 		return -1;
 	}
-	int size = 2;
-	myStruct element;
-	myStruct* vect = (myStruct*)malloc(sizeof(myStruct)*size);
-	int riga = 0;
 
-	while(fscanf(fp," %d %f %s\n",&(element.n), &(element.f), element.c)!= EOF)
+	// Alloco memoria vettore
+	vett = (DatiRiga*)malloc(sizeof(DatiRiga)*dim);
+	
+	// Controllo che l'allocazione sia andata a buon fine. In caso negativo esco.
+	if (vett==NULL) {
+		fprintf(stderr, "Allocazione non riuscita\n");
+		return -2;
+	}
+	
+	// Ciclo per leggere tutte le righe. Ogni volta leggo la riga memorizzandola sull'elemento di appoggio
+	while(fscanf(fp," %d %f %s\n",&(e.n), &(e.f), e.c) != EOF)
 	{
-		if(riga<size-1)
+		#if VERBOSITY >= 1
+		printf("Riga: %d, Dim: %d, element: %d %f %s, vett: %p\n",riga,dim,e.n,e.f,e.c,(void*)vett);
+		#endif
+		// Se non ho più spazio nel vettore, raddoppio la dimensione e rialloco
+		if(riga==dim)
 		{
-			vect[riga] = element;
+			dim = dim * 2;
+			#if VERBOSITY >= 1
+			printf("Raddoppio con nuova dimensione %d\n",dim);
+			#endif
+			vett = (DatiRiga*)realloc(vett, dim*sizeof(DatiRiga));
 		}
-		else
-		{
-			size *= 2;
-			vect = realloc(vect,size);
-			vect[riga] = element;
-		}
+		
+		// Immagazzino una copia dell'elemento di appoggio nel vettore
+		vett[riga].n = e.n;
+		vett[riga].f = e.f;
+		strcpy(vett[riga].c, e.c);
 
+		// Incremento il numero di righe lette
 		riga++;
 	}
 
+	#if VERBOSITY >= 1
+	printf("Ho letto tutto. Riga: %d, Dim: %d, vett: %p\n",riga,dim,(void*)vett);
+	#endif
+
+	// Chiudo il file di input
 	fclose(fp);
 
-	
+	// Apro il file di output in modalità scrittura
 	fp = fopen("data_es2_output","w");
+
+	// Controllo se l'apertura sia andata a buon fine. In caso negativo esco
 	if (fp==NULL)
 	{
-		fprintf(stderr, "Errore nell'apertura del file\n");
+		fprintf(stderr, "Apertura file non riuscita\n");
 		return -1;
 	}
 
-	for(int i=riga-1;i>=0;i--)
+	// Ciclo per visitare il vettore al contrario
+	for(i = riga-1; i >= 0; i--)
 	{
-		fprintf(fp, " %d %f %s\n", vect[i].n, vect[i].f, vect[i].c);
+		// Stampo su file
+		fprintf(fp, " %d %f %s\n", vett[i].n, vett[i].f, vett[i].c);
 	}
 
+	// Chiusura del file di output
 	fclose(fp);
-	free(vect);
+
+	// Libero la memoria allocata
+	free(vett);
+
+	//Termino il programma con successo
 	return 0;
 }

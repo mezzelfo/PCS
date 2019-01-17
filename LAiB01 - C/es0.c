@@ -6,7 +6,7 @@ int main()
 	// Variabili
 	int n;		// Numero di caratteri da leggere
 	int i;		// Variabile di ciclo
-	char* p;	// Vettore per immagazzinare i caratteri
+	char* vett;	// Vettore per immagazzinare i caratteri
 	char temp;	// Variabile d'appoggio per lo scambio dei caratteri
 
 	// Istruzioni
@@ -15,10 +15,10 @@ int main()
 	scanf(" %d", &n);
 
 	// Alloco memoria richiesta
-	p = (char*)malloc(sizeof(char)*n);
+	vett = (char*)malloc(sizeof(char)*n);
 
-	// Controllo che l'allocazione sia andata a buon fine. In caso negativo esco.
-	if(p==NULL)
+	// Controllo che l'allocazione sia andata a buon fine. In caso negativo esco
+	if(vett==NULL)
 	{
 		fprintf(stderr, "Allocazione non riuscita\n");
 		return -1;
@@ -28,23 +28,23 @@ int main()
 	printf("Inserisci i %d caratteri\n", n);
 	for (i = 0; i < n; ++i)
 	{
-		scanf(" %c", &(p[i]));
+		scanf(" %c", &(vett[i]));
 		#if VERBOSITY >= 1
-		printf("Ho letto %c\n", p[i]);
+		printf("Ho letto %c\n", vett[i]);
 		#endif
 	}
 
 	// Rigiro il vettore:
 	// Il ciclo scambia per la prima metà del vettore
-	// ogni elemento con il suo speculare.
+	// ogni elemento con il suo speculare
 	printf("Rigiro il vettore\n");
 	for (i = 0; i <= (int)(n/2-1); ++i)
 	{
-		temp = p[i];
-		p[i] = p[n-i-1];
-		p[n-i-1] = temp;
+		temp = vett[i];
+		vett[i] = vett[n-i-1];
+		vett[n-i-1] = temp;
 		#if VERBOSITY >= 2
-		printf("Ho scambiato %c con %c\n", p[i], p[n-i-1]);
+		printf("Ho scambiato %c con %c\n", vett[i], vett[n-i-1]);
 		#endif
 	}
 
@@ -52,11 +52,11 @@ int main()
 	printf("Stampo il vettore\n");
 	for (i = 0; i < n; ++i)
 	{
-		printf("%c\n", p[i]);
+		printf("%c\n", vett[i]);
 	}
 
 	// Libero la memoria allocata
-	free(p);
+	free(vett);
 
 	//Termino il programma
 	return 0;
