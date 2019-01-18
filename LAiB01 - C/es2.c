@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 	// Controllo se l'apertura sia andata a buon fine. In caso negativo esco
 	if (fp==NULL)
 	{
-		fprintf(stderr, "Apertura file non riuscita\n");
+		fprintf(stderr, "Apertura file di input non riuscita\n");
 		return -1;
 	}
 
@@ -81,7 +81,7 @@ int main(int argc, char** argv)
 	// Controllo se l'apertura sia andata a buon fine. In caso negativo esco
 	if (fp==NULL)
 	{
-		fprintf(stderr, "Apertura file non riuscita\n");
+		fprintf(stderr, "Apertura file di output non riuscita\n");
 		return -1;
 	}
 
