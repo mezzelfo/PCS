@@ -1,55 +1,76 @@
 #include "tool.h"
 
-
 Matrice allocaMatrice(const size_t ndim)
 {
+	// Variabili
 	size_t i;
 	Matrice m;
 
+	// Alloco memoria
 	m = (Matrice)malloc(ndim * sizeof(Vettore));
-	
+
+	// Controllo che l'allocazione sia andata a buon fine
 	if (m == NULL) {
 		fprintf(stderr, "Allocazione non riuscita\n");
 		exit(EXIT_FAILURE);
 	}
-	
+
+	// Alloco i vettori riga
 	for (i = 0; i < ndim; i++) m[i] = allocaVettore(ndim);
 
+	// Ritorno la matrice allocata
 	return m;
 }
 
 void liberaMatrice(Matrice m, const size_t ndim)
 {
+	// Variabili
 	size_t i;
 
+	// Libero ogni vettore riga
 	for (i = 0; i < ndim; i++) free(m[i]);
+
+	// Libero la matrice (l'unico vettore colonna)
 	free(m);
 }
 
 Vettore allocaVettore(const size_t ndim)
 {
+	// Variabili
 	Vettore v;
 
+	// Alloco memoria
 	v = (Vettore)malloc(ndim * sizeof(Elemento));
 	
+	// Controllo che l'allocazione sia andata a buon fine
 	if (v == NULL) {
 		fprintf(stderr, "Allocazione non riuscita\n");
 		exit(EXIT_FAILURE);
 	}
 
+	// Ritorno il vettore allocata
 	return v;
 }
 
 int* fattorizzazioneLU(Matrice* m, const size_t ndim)
 {
+	// Variabili
 	size_t i,j,k;
-	int* pivot = (int*)malloc(ndim*sizeof(int));
+	int temp, ind_max;
+	int* pivot;
+	Vettore tmp;
+
+	// Istruzioni
+	// Alloco la memoria per il vettore delle informazioni per ricostruire il pivoting
+	pivot = (int*)malloc(ndim*sizeof(int));
+	// Riempio il pivot con [0,1,2,3,...] in modo da poi saper riordinarlo
 	for(i=0; i<ndim; i++) pivot[i]=i;
 
 
 	for (k = 0; k<ndim-1; k++)
 	{
-		int ind_max = k;
+		// Cerco l'indice dell'elemento per effettuare il pivoting
+		ind_max = k;
 		for (i = k+1; i < ndim; i++)
 		{
 			if(fabs((*m)[i][k]) > fabs((*m)[ind_max][k]))
@@ -57,20 +78,21 @@ int* fattorizzazioneLU(Matrice* m, const size_t ndim)
 				ind_max = i;
 			}
 		}
-		//printf("scambio riga %d con %d\n", ind_max, k);
-		//voglio scambiare la riga k con la riga ind_max
-		Vettore tmp = (*m)[ind_max];
+
+		// Effettuo il pivoting tra la riga k e la riga ind_max
+		tmp = (*m)[ind_max];
 		(*m)[ind_max] = (*m)[k];
 		(*m)[k] = tmp;
 
-		int temp = pivot[ind_max];
+		// Effettuo gli stessi cambi sul vettore pivot
+		temp = pivot[ind_max];
 		pivot[ind_max] = pivot[k];
 		pivot[k] = temp;
 
-
+		// Eseguo l'eliminazione gaussiana
 		for (i = k+1; i < ndim; i++)
 		{
-			if(fabs((*m)[k][k]) > TOL)//Reimplement relative error 1e-15
+			if(fabs((*m)[k][k]) > TOL)
 			{
 				(*m)[i][k] = (*m)[i][k]/(*m)[k][k];
 				for (j = k+1; j < ndim; j++)
@@ -85,18 +107,24 @@ int* fattorizzazioneLU(Matrice* m, const size_t ndim)
 			}
 		}
 	}
+
+	// Ritorno il vettore contenente le informazioni dei pivoting effettuati
 	return pivot;
 	
 }
 
 Vettore backwardSubstitution(const Matrice a, const Vettore y, const size_t ndim)
 {
+	// Variabili
 	Vettore x;
 	int j;
 	size_t i;
 	Elemento sum;
+
+	// Alloco vettore delle incognite
 	x = allocaVettore(ndim);
 
+	// Eseguo sostituzione all'indietro
 	for (j = ndim-1; j >= 0; j--)
 	{
 		sum = 0.0;
@@ -106,16 +134,22 @@ Vettore backwardSubstitution(const Matrice a, const Vettore y, const size_t ndim
 		}
 		x[j] = (y[j] - sum)/a[j][j];
 	}
+
+	// Ritorno il vettore di soluzioni
 	return x;
 }
 
 Vettore forwardSubstitution(const Matrice a, const Vettore y, const size_t ndim)
 {
+	// Variabili
 	Vettore x;
 	size_t i,j;
 	Elemento sum;
+
+	// Alloco vettore delle incognite
 	x = allocaVettore(ndim);
 
+	// Eseguo sostituzione in avanti
 	for (j = 0; j < ndim; j++)
 	{
 		sum = 0;
@@ -125,19 +159,24 @@ Vettore forwardSubstitution(const Matrice a, const Vettore y, const size_t ndim)
 		}
 		x[j] = (y[j] - sum);
 	}
+
+	// Ritorno il vettore di soluzioni
 	return x;
 }
 
 Vettore permVett(const int* const pivot, const Vettore y, const size_t ndim)
 {
+	// Variabili
 	size_t i;
 	Vettore Py;
+
+	// Alloco il vettore permutato dei termini noti
 	Py = allocaVettore(ndim);
 
-	for(i=0;i<ndim;i++)
-	{
-		Py[pivot[i]] = y[i];
-	}
+	// Riempio Py in modo permutato secondo il vettore pivot
+	for(i=0;i<ndim;i++) Py[pivot[i]] = y[i];
+
+	// Ritorno il vettore permutato
 	return Py;
 }
 
