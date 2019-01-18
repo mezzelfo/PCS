@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 // Prototipo funzione che rigira un vettore di caratteri lungo n
-void rigira(char** v, int n);
+void rigira(char* v, const int n);
 
 int main()
 {
@@ -38,7 +38,7 @@ int main()
 
 	// Rigiro il vettore. Chiamata alla funzione apposita
 	printf("Rigiro il vettore\n");
-	rigira(&vett, n);
+	rigira(vett, n);
 
 	// Stampo il vettore rigirato
 	printf("Stampo il vettore\n");
@@ -55,7 +55,7 @@ int main()
 }
 
 // Implementazione del prototipo sopra dichiarato
-void rigira(char** v, int n)
+void rigira(char* v, const int n)
 {
 	// Variabile temporanea per eseguire lo scambio
 	char temp;
@@ -63,11 +63,11 @@ void rigira(char** v, int n)
 	// Ciclo che rigira v
 	for (int i = 0; i <= (int)(n/2-1); ++i)
 	{
-		char temp = (*v)[i];
-		(*v)[i] = (*v)[n-i-1];
-		(*v)[n-i-1] = temp;
+		char temp = v[i];
+		v[i] = v[n-i-1];
+		v[n-i-1] = temp;
 		#if VERBOSITY >= 2
-		printf("Ho scambiato %c con %c\n", (*v)[i], (*v)[n-i-1]);
+		printf("Ho scambiato %c con %c\n", v[i], v[n-i-1]);
 		#endif
 	}
 }

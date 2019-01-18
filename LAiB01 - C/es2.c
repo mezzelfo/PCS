@@ -60,9 +60,7 @@ int main(int argc, char** argv)
 		}
 		
 		// Immagazzino una copia dell'elemento di appoggio nel vettore
-		vett[riga].n = e.n;
-		vett[riga].f = e.f;
-		strcpy(vett[riga].c, e.c);
+		vett[riga] = e;
 
 		// Incremento il numero di righe lette
 		riga++;

@@ -22,9 +22,9 @@ struct Lista
 	struct Nodo* coda;
 };
 
-void inizializzaLista(struct Lista* lst);				// Prepara la lista per essere usata
-void aggiungiLista(struct Lista* lst, struct Data d);	// Costruisce un nodo e lo aggiunge in coda alla lista
-void liberaLista(struct Nodo* nodo);					// Libera la memoria di tutta la lista a ritroso partendo da param:nodo
+struct Lista inizializzaLista();							// Prepara la lista per essere usata
+void aggiungiLista(struct Lista* lst, const struct Data d);	// Costruisce un nodo e lo aggiunge in coda alla lista
+void liberaLista(struct Nodo* nodo);						// Libera la memoria di tutta la lista a ritroso partendo da param:nodo
 
 int main(int argc, char** argv)
 {
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 
 	// Istruzioni
 	// Imposto i parametri iniziali della lista
-	inizializzaLista(&lst);
+	lst = inizializzaLista();
 
 	// Apro il file di input in modalità lettura
 	fp = fopen("data_es2_input","r");
@@ -76,19 +76,20 @@ int main(int argc, char** argv)
 
 	// Libero la memoria allocata
 	liberaLista(lst.coda);
-	inizializzaLista(&lst);
 
 	//Termino il programma con successo
 	return 0;
 }
 
-void inizializzaLista(struct Lista* lst)
+struct Lista inizializzaLista()
 {
-	lst->testa = NULL;
-	lst->coda = NULL;
+	struct  List lst;
+	lst.testa = NULL;
+	lst.coda = NULL;
+	return lst;
 }
 
-void aggiungiLista(struct Lista* lst, struct Data d)
+void aggiungiLista(struct Lista* lst, const struct Data d)
 {
 	// Alloco la memoria del nodo
 	struct Nodo* nodo = (struct Nodo*)malloc(sizeof(struct Nodo));
