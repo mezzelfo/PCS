@@ -59,11 +59,12 @@ void rigira(char* v, const int n)
 {
 	// Variabile temporanea per eseguire lo scambio
 	char temp;
+	int i;
 
 	// Ciclo che rigira v
-	for (int i = 0; i <= (int)(n/2-1); ++i)
+	for (i = 0; i <= (int)(n/2-1); ++i)
 	{
-		char temp = v[i];
+		temp = v[i];
 		v[i] = v[n-i-1];
 		v[n-i-1] = temp;
 		#if VERBOSITY >= 2

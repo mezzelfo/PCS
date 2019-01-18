@@ -9,7 +9,7 @@ typedef struct s {
 	char c[6+1]; //Stringa al più di 6 caratteri
 } DatiRiga;
 
-int main(int argc, char** argv)
+int main()
 {
 	// Variabili
 	FILE* fp;			// Puntatore a file. Usato sia per input che output

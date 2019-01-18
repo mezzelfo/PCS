@@ -26,7 +26,7 @@ struct Lista inizializzaLista();							// Prepara la lista per essere usata
 void aggiungiLista(struct Lista* lst, const struct Data d);	// Costruisce un nodo e lo aggiunge in coda alla lista
 void liberaLista(struct Nodo* nodo);						// Libera la memoria di tutta la lista a ritroso partendo da param:nodo
 
-int main(int argc, char** argv)
+int main()
 {
 	// Variabili
 	FILE* fp;
@@ -83,7 +83,7 @@ int main(int argc, char** argv)
 
 struct Lista inizializzaLista()
 {
-	struct  List lst;
+	struct  Lista lst;
 	lst.testa = NULL;
 	lst.coda = NULL;
 	return lst;
