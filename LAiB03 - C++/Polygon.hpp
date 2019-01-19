@@ -1,17 +1,21 @@
 #ifndef POLYGON_H
 #define POLYGON_H
 
-#include <vector>
-#include "Edge.hpp"
 #include "Point2D.hpp"
+#include "Edge.hpp"
+#include <vector>
+#include <set>
+#include <stdexcept>
+#include <iostream>
 
 class Polygon
 {
+    static std::set<Edge> allEdges;
+    std::vector< std::set<Edge>::iterator > myEdges;
 public:
     // Costruttori
-    Polygon();
-    Polygon(std::vector<Point2D>);
-    Polygon(std::vector<Edge>);
+    Polygon(std::vector<Point2D>& v);
+    Polygon(std::vector<Edge>& v);
 
     // Distruttore
     ~Polygon();
@@ -23,10 +27,10 @@ public:
     std::vector<Point2D> Vertices();
 
     // Metodo per l'accesso al numero dei lati
-    size_t sidesNum();
+    size_t edgesNum();
 
     // Metodo per l'accesso ai lati
-    std::vector<Edge> Sides();
+    std::vector<Edge> Edges();
 
     // Metodo per il calcolo del perimetro
     double Perimeter();
