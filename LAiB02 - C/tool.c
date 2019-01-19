@@ -1,9 +1,9 @@
 #include "tool.h"
 
-Matrice allocaMatrice(const size_t ndim)
+Matrice allocaMatrice(const unsigned ndim)
 {
 	// Variabili
-	size_t i;
+	unsigned i;
 	Matrice m;
 
 	// Alloco memoria
@@ -22,10 +22,10 @@ Matrice allocaMatrice(const size_t ndim)
 	return m;
 }
 
-void liberaMatrice(Matrice m, const size_t ndim)
+void liberaMatrice(Matrice m, const unsigned ndim)
 {
 	// Variabili
-	size_t i;
+	unsigned i;
 
 	// Libero ogni vettore riga
 	for (i = 0; i < ndim; i++) free(m[i]);
@@ -34,7 +34,7 @@ void liberaMatrice(Matrice m, const size_t ndim)
 	free(m);
 }
 
-Vettore allocaVettore(const size_t ndim)
+Vettore allocaVettore(const unsigned ndim)
 {
 	// Variabili
 	Vettore v;
@@ -52,10 +52,10 @@ Vettore allocaVettore(const size_t ndim)
 	return v;
 }
 
-int* fattorizzazioneLU(Matrice* m, const size_t ndim)
+int* fattorizzazioneLU(Matrice* m, const unsigned ndim)
 {
 	// Variabili
-	size_t i,j,k;
+	unsigned i,j,k;
 	int temp, ind_max;
 	int* pivot;
 	Vettore tmp;
@@ -113,12 +113,12 @@ int* fattorizzazioneLU(Matrice* m, const size_t ndim)
 	
 }
 
-Vettore backwardSubstitution(const Matrice a, const Vettore y, const size_t ndim)
+Vettore backwardSubstitution(const Matrice a, const Vettore y, const unsigned ndim)
 {
 	// Variabili
 	Vettore x;
 	int j;
-	size_t i;
+	unsigned i;
 	Elemento sum;
 
 	// Alloco vettore delle incognite
@@ -139,11 +139,11 @@ Vettore backwardSubstitution(const Matrice a, const Vettore y, const size_t ndim
 	return x;
 }
 
-Vettore forwardSubstitution(const Matrice a, const Vettore y, const size_t ndim)
+Vettore forwardSubstitution(const Matrice a, const Vettore y, const unsigned ndim)
 {
 	// Variabili
 	Vettore x;
-	size_t i,j;
+	unsigned i,j;
 	Elemento sum;
 
 	// Alloco vettore delle incognite
@@ -164,10 +164,10 @@ Vettore forwardSubstitution(const Matrice a, const Vettore y, const size_t ndim)
 	return x;
 }
 
-Vettore permVett(const int* const pivot, const Vettore y, const size_t ndim)
+Vettore permVett(const int* const pivot, const Vettore y, const unsigned ndim)
 {
 	// Variabili
-	size_t i;
+	unsigned i;
 	Vettore Py;
 
 	// Alloco il vettore permutato dei termini noti
@@ -180,7 +180,7 @@ Vettore permVett(const int* const pivot, const Vettore y, const size_t ndim)
 	return Py;
 }
 
-Vettore risolviSistemaLineare(Matrice A, Vettore y, const size_t ndim)
+Vettore risolviSistemaLineare(Matrice A, Vettore y, const unsigned ndim)
 {
 	// Variabili
 	int* pivot;

@@ -49,7 +49,7 @@ int main()
 	}
 
 	// Ciclo per leggere tutte le righe. Ogni volta leggo la riga e la aggiungo alla lista
-	while(fscanf(fp," %d %f %s\n",&(d.n), &(d.f), d.c) != EOF ) aggiungiLista(&lst, d);
+	while(fscanf(fp," %d %f %7s\n",&(d.n), &(d.f), d.c) != EOF ) aggiungiLista(&lst, d);
 	
 	// Chiudo il file di input
 	fclose(fp);

@@ -4,8 +4,8 @@
 int main()
 {
 	// Variabili
-	size_t ndim;
-	size_t i,j;
+	unsigned ndim;
+	unsigned i,j;
 	Matrice matrice;
 	Vettore terminiNoti;
 	Vettore soluzione;
@@ -13,7 +13,7 @@ int main()
 	// Istruzioni
 	// Acquisisco da standard input la dimensione della matrice
 	printf("Inserisci la dimensione della matrice\n");
-	scanf(" %lu", &ndim);
+	scanf(" %u", &ndim);
 
 	// Alloco la matrice e il vettore dei termini noti
 	matrice = allocaMatrice(ndim);

@@ -18,6 +18,7 @@ int main()
 	int i;				// Variabile di ciclo
 	DatiRiga e;			// Elemento d'appoggio
 	DatiRiga* vett;		// Vettore dove immagazzinare i dati
+	DatiRiga* vettTMP;		// Vettore dove immagazzinare i dati
 
 	// Inizializzazione Variabili
 	dim = 4;			// Numero stimato di righe. Se necessita, raddoppio
@@ -44,7 +45,7 @@ int main()
 	}
 	
 	// Ciclo per leggere tutte le righe. Ogni volta leggo la riga memorizzandola sull'elemento di appoggio
-	while(fscanf(fp," %d %f %s\n",&(e.n), &(e.f), e.c) != EOF)
+	while(fscanf(fp," %d %f %7s\n",&(e.n), &(e.f), e.c) != EOF)
 	{
 		#if VERBOSITY >= 1
 		printf("Riga: %d, Dim: %d, element: %d %f %s, vett: %p\n",riga,dim,e.n,e.f,e.c,(void*)vett);
@@ -56,7 +57,13 @@ int main()
 			#if VERBOSITY >= 1
 			printf("Raddoppio con nuova dimensione %d\n",dim);
 			#endif
-			vett = (DatiRiga*)realloc(vett, dim*sizeof(DatiRiga));
+			vettTMP = (DatiRiga*)realloc(vett, dim*sizeof(DatiRiga));
+			if (vettTMP==NULL)
+			{
+				fprintf(stderr, "Reallocazione non riuscita\n");
+				return -3;
+			}
+			vett = vettTMP;
 		}
 		
 		// Immagazzino una copia dell'elemento di appoggio nel vettore
@@ -93,7 +100,7 @@ int main()
 	// Chiusura del file di output
 	fclose(fp);
 
-	// Libero la memoria allocata
+	// Libero la memoria allocata. vettTMP è sempre uguale a vett
 	free(vett);
 
 	//Termino il programma con successo

@@ -14,8 +14,8 @@ class Polygon
     std::vector< std::set<Edge>::iterator > myEdges;
 public:
     // Costruttori
-    Polygon(std::vector<Point2D>& v);
-    Polygon(std::vector<Edge>& v);
+    explicit Polygon(std::vector<Point2D>& v);
+    explicit Polygon(std::vector<Edge>& v);
 
     // Distruttore
     ~Polygon();
