@@ -1,30 +1,38 @@
-#ifndef POLY_INC
-#define POLY_INC
+#ifndef POLYGON_H
+#define POLYGON_H
 
 #include <vector>
 #include "Edge.hpp"
-
-typedef std::set<Edge>::iterator IteratorToEdge;
+#include "Point2D.hpp"
 
 class Polygon
 {
-	std::vector<IteratorToEdge> lati;
-	static std::set<Edge> EdgeSet;
 public:
-	Polygon() {lati.clear();}
-	~Polygon() {lati.clear();}
-	Polygon(std::vector<Edge>&);
-	Polygon(const Polygon& o) {lati = o.lati;}
+    // Costruttori
+    Polygon();
+    Polygon(std::vector<Point2D>);
+    Polygon(std::vector<Edge>);
 
-	Edge getEdge(int i) {return *lati.at(i);}
-	int getNumEdge() {return int(lati.size());}
+    // Distruttore
+    ~Polygon();
 
-	double getPerimeter();
-	std::vector<IteratorToPoint> getVertices();
-	double getArea();
+    // Costruttore di copia
+    Polygon(const Polygon& other);
 
-	static void printMem() {std::cout<<"Memorizzati "<<EdgeSet.size()<<" Edge"<<std::endl;}
-	
+    // Metodi per l'accesso alle coordinate dei vertici
+    std::vector<Point2D> Vertices();
+
+    // Metodo per l'accesso al numero dei lati
+    size_t sidesNum();
+
+    // Metodo per l'accesso ai lati
+    std::vector<Edge> Sides();
+
+    // Metodo per il calcolo del perimetro
+    double Perimeter();
+
+    // Metodo per il caloclo dell'area
+    double Area();
 };
 
 #endif

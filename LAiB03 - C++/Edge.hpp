@@ -1,40 +1,27 @@
-#ifndef EDGE_INC
-#define EDGE_INC
-
-#include <set>
-#include <math.h>
-#include "Point.hpp"
-
-typedef std::set<Point>::iterator IteratorToPoint;
+#ifndef EDGE_H
+#define EDGE_H
+#include "Point2D.hpp"
 
 class Edge
 {
-	static std::set<Point> PointSet;
-	IteratorToPoint index1, index2;
 public:
-	Edge() {std::cout<<"Creato un Edge vuoto"<<std::endl;}
-	~Edge() {}
-	Edge(const Edge& o);
-	Edge(Point& P1, Point& P2);
+    // Costruttori
+    Edge();
+    Edge(const Point2D& P);
+    Edge(const Point2D& A, const Point2D& B);
 
-	Point getA() const {return *index1;}
-	Point getB() const {return *index2;}
-	IteratorToPoint getPtrToA() const {return index1;}
-	IteratorToPoint getPtrToB() const {return index2;}
+    // Distruttore
+    ~Edge();
 
-	double getLength() const;
+    // Costuttore di copia
+    Edge(const Edge& other);
 
-	friend bool operator==(const Edge& lhs, const Edge& rhs);
-	bool operator<(const Edge& E) const
-	{
-		if (index1 == E.index1)
-		{
-			return (*index2 < *(E.index2));
-		} else return (*index1 < *(E.index1));
-	}
+    // Metodi per l'accesso alle coordinate degli estremi
+    Point2D getA();
+    Point2D getB();
 
-	static void printMem() {std::cout<<"Memorizzati "<<PointSet.size()<<" Point"<<std::endl;}
-
+    // Metodi per il calcolo della lunghezza del lato
+    double lunghezza();
 };
 
 #endif
