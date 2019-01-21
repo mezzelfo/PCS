@@ -20,6 +20,7 @@ public:
 
     // Costruttore di copia
     Point2D(const Point2D& other);
+    Point2D& operator=(const Point2D& other);
 
     // Metodi per l'accesso alle coordinate
     double getX();

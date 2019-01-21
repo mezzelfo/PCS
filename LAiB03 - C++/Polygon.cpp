@@ -32,9 +32,16 @@ Polygon::~Polygon()
 }
 
 // Costruttore di copia
-Polygon::Polygon(const Polygon& other)
+Polygon::Polygon(const Polygon& other) : myEdges(other.myEdges)
 {
+    std::cout << "Copio un Polygon\n";
+}
+
+Polygon& Polygon::operator=(const Polygon& other)
+{
+    std::cout << "Copio un Polygon tramite assignement operator\n";
     myEdges = other.myEdges;
+    return *this;
 }
 
 // Metodi per l'accesso alle coordinate dei vertici

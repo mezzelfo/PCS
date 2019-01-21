@@ -27,6 +27,13 @@ Point2D::Point2D(const Point2D& other)
     x = other.x;
     y = other.y;
 }
+Point2D& Point2D::operator=(const Point2D& other)
+{
+    std::cout << "Copio il punto tramite assignement operator" << other << "\n";
+    x = other.x;
+    y = other.y;
+    return *this;
+}
 
 // Metodi per l'accesso alle coordinate
 double Point2D::getX()

@@ -57,13 +57,13 @@ int main()
 // Implementazione del prototipo sopra dichiarato
 void rigira(char* v, const int n)
 {
-	// Variabile temporanea per eseguire lo scambio
-	char temp;
+	// Variabile di ciclo	
 	int i;
 
 	// Ciclo che rigira v
 	for (i = 0; i <= (int)(n/2-1); ++i)
 	{
+		char temp;	// Variabile d'appoggio per lo scambio dei caratteri
 		temp = v[i];
 		v[i] = v[n-i-1];
 		v[n-i-1] = temp;

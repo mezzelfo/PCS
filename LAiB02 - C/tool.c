@@ -56,7 +56,6 @@ int* fattorizzazioneLU(Matrice* m, const unsigned ndim)
 {
 	// Variabili
 	unsigned i,j,k;
-	int temp, ind_max;
 	int* pivot;
 	Vettore tmp;
 
@@ -69,6 +68,10 @@ int* fattorizzazioneLU(Matrice* m, const unsigned ndim)
 
 	for (k = 0; k<ndim-1; k++)
 	{
+		// Variabili
+		int temp, ind_max;
+
+		//Istruzioni
 		// Cerco l'indice dell'elemento per effettuare il pivoting
 		ind_max = k;
 		for (i = k+1; i < ndim; i++)
@@ -119,7 +122,6 @@ Vettore backwardSubstitution(const Matrice a, const Vettore y, const unsigned nd
 	Vettore x;
 	int j;
 	unsigned i;
-	Elemento sum;
 
 	// Alloco vettore delle incognite
 	x = allocaVettore(ndim);
@@ -127,6 +129,7 @@ Vettore backwardSubstitution(const Matrice a, const Vettore y, const unsigned nd
 	// Eseguo sostituzione all'indietro
 	for (j = ndim-1; j >= 0; j--)
 	{
+		Elemento sum;
 		sum = 0.0;
 		for (i = j+1; i < ndim; ++i)
 		{
@@ -144,7 +147,6 @@ Vettore forwardSubstitution(const Matrice a, const Vettore y, const unsigned ndi
 	// Variabili
 	Vettore x;
 	unsigned i,j;
-	Elemento sum;
 
 	// Alloco vettore delle incognite
 	x = allocaVettore(ndim);
@@ -152,6 +154,7 @@ Vettore forwardSubstitution(const Matrice a, const Vettore y, const unsigned ndi
 	// Eseguo sostituzione in avanti
 	for (j = 0; j < ndim; j++)
 	{
+		Elemento sum;
 		sum = 0;
 		for (i = 0; i < j; ++i)
 		{

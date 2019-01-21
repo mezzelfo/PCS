@@ -22,6 +22,7 @@ public:
 
     // Costuttore di copia
     Edge(const Edge& other);
+    Edge& operator=(const Edge& other);
 
     // Metodi per l'accesso alle coordinate degli estremi
     Point2D getA() const;

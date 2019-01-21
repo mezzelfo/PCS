@@ -7,7 +7,6 @@ int main()
 	int n;		// Numero di caratteri da leggere
 	int i;		// Variabile di ciclo
 	char* vett;	// Vettore per immagazzinare i caratteri
-	char temp;	// Variabile d'appoggio per lo scambio dei caratteri
 
 	// Istruzioni
 	// Acquisisco da standard input il numero di caratteri da immagazzinare
@@ -40,6 +39,7 @@ int main()
 	printf("Rigiro il vettore\n");
 	for (i = 0; i <= (int)(n/2-1); ++i)
 	{
+		char temp;	// Variabile d'appoggio per lo scambio dei caratteri
 		temp = vett[i];
 		vett[i] = vett[n-i-1];
 		vett[n-i-1] = temp;

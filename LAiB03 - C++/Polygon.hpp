@@ -22,6 +22,7 @@ public:
 
     // Costruttore di copia
     Polygon(const Polygon& other);
+    Polygon& operator=(const Polygon& other);
 
     // Metodi per l'accesso alle coordinate dei vertici
     std::vector<Point2D> Vertices();

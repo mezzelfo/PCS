@@ -25,6 +25,14 @@ Edge::Edge(const Edge& other)
     B = other.B;
 }
 
+Edge& Edge::operator=(const Edge& other)
+{
+    std::cout << "Copio un Edge tramite assignement operator "<< other << "\n";
+    A = other.A;
+    B = other.B;
+    return *this;
+}
+
 // Metodi per l'accesso alle coordinate degli estremi
 Point2D Edge::getA() const
 {

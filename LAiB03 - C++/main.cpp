@@ -12,5 +12,6 @@ int main()
     Polygon P(v);
     std::cout << "Fine costruizione Poligono\n";
     std::cout<< "Perimeter: " << P.Perimeter() << std::endl;
+    std::cout<< "Area: " << P.Area() << std::endl;
     return 0;
 }

@@ -41,6 +41,7 @@ int main()
 	// Controllo che l'allocazione sia andata a buon fine. In caso negativo esco.
 	if (vett==NULL) {
 		fprintf(stderr, "Allocazione non riuscita\n");
+		fclose(fp);
 		return -2;
 	}
 	
@@ -61,6 +62,7 @@ int main()
 			if (vettTMP==NULL)
 			{
 				fprintf(stderr, "Reallocazione non riuscita\n");
+				fclose(fp);
 				return -3;
 			}
 			vett = vettTMP;
