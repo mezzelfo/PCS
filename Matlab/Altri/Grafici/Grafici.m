@@ -15,7 +15,7 @@ clear x_ax y* v
 %% ES 3
 f = @(x,y) exp(-x.^2-y.^2).*sin(x.*y);
 figure(1);
-ezmesh(f)
+ezmesh(f,[-pi pi])
 figure(2);
 [X,Y] = meshgrid(linspace(-pi,pi));
 Z = f(X,Y);

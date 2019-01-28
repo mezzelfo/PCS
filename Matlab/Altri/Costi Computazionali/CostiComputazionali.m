@@ -8,17 +8,16 @@ end
 toc
 tic
 y = zeros(1,n);
-tic
 for i=1:n
     y(i)=i;
 end
 toc
 clear i x n y
 %% ES 2
-n = 5000;
+n = 500;
 t = [0 0 0];
 
-for v=1:10
+for v=1:2000
     A = rand(n,n);
     b = rand(n,1);
     c = zeros(n,1);
@@ -56,7 +55,8 @@ for volte=1:100000
         tic;
         for test=1:n
             if v(test)==cercata
-                t(test) = t(test) + toc;
+                t(pos) = t(pos) + toc;
+                break;
             end
         end
     end

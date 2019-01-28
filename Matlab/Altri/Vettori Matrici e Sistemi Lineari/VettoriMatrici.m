@@ -25,10 +25,12 @@ clear A
 %% ES 4
 A = es4(10,4);
 [L,U] = lu(A);
-spy(A-U)
+figure()
+spy(A)
+figure()
+spy(U)
 %% ES 5
-clc
-for n=10:10000:50000
+for n=10:10000:30000
     A = 10*diag(ones(n,1));
     A = A + 5*diag(ones(n-1,1),-1);
     A = A + 5*diag(ones(n-1,1),+1);
@@ -36,4 +38,34 @@ for n=10:10000:50000
     A = A + diag(ones(n-9,1),+9);
     whos A
 end
+clear A n
+%% ES 6
+for n=10:10000:50010
+    e=ones(n,1);
+    A = spdiags([e 5*e 10*e 5*e e], [-9 -1 0 1 9], n, n);
+    whos A
+end
+clear A n e
+%% ES 7
+n = 10;
+c = -5;
+A = 4*diag(ones(n,1))-diag(ones(n-1,1),-1)-diag(ones(n-1,1),1);
+B = [eye(n/2);eye(n/2)];
+C = c*eye(n/2);
+[A B; B' C]
+clear n c A B C
+%% ES 12
+q = 3;
+p = 2;
+n = 10;
+A = (p+q)*eye(n)+spdiags(rand(n,p+q+1),-q:p, n, n);
+[L,U] = lu(A);
+A
+L
+U
+clear A L U q p n
+%% ES 13
+n = 10;
+A = 2*eye(n)+spdiags(rand(n,3),-1:1, n, n);
+rref(A)
 clear A n
