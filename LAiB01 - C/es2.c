@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "tool.h"
 
 // Definizione della struttura di ogni riga
 typedef struct s {
@@ -25,25 +26,11 @@ int main()
 	riga = 0;			// All'inizio ho letto 0 righe...
 
 	// Istruzioni
-	// Apro il file di input in modalità lettura
-	fp = fopen("data_es2_input","r");
+	// Apro il file di input in modalità lettura in modo sicuro
+	fp = secFopenRead("data_es2_input");
 
-	// Controllo se l'apertura sia andata a buon fine. In caso negativo esco
-	if (fp==NULL)
-	{
-		fprintf(stderr, "Apertura file di input non riuscita\n");
-		return -1;
-	}
-
-	// Alloco memoria vettore
-	vett = (DatiRiga*)malloc(sizeof(DatiRiga)*dim);
-	
-	// Controllo che l'allocazione sia andata a buon fine. In caso negativo esco.
-	if (vett==NULL) {
-		fprintf(stderr, "Allocazione non riuscita\n");
-		fclose(fp);
-		return -2;
-	}
+	// Alloco memoria vettore in modo sicuro
+	vett = (DatiRiga*)secAlloc(sizeof(DatiRiga)*dim);
 	
 	// Ciclo per leggere tutte le righe. Ogni volta leggo la riga memorizzandola sull'elemento di appoggio
 	while(fscanf(fp," %d %f %7s\n",&(e.n), &(e.f), e.c) != EOF)
@@ -83,21 +70,11 @@ int main()
 	fclose(fp);
 
 	// Apro il file di output in modalità scrittura
-	fp = fopen("data_es2_output","w");
-
-	// Controllo se l'apertura sia andata a buon fine. In caso negativo esco
-	if (fp==NULL)
-	{
-		fprintf(stderr, "Apertura file di output non riuscita\n");
-		return -1;
-	}
+	fp = secFopenWrite("data_es2_output");
 
 	// Ciclo per visitare il vettore al contrario
 	for(i = riga-1; i >= 0; i--)
-	{
-		// Stampo su file
-		fprintf(fp, " %d %f %s\n", vett[i].n, vett[i].f, vett[i].c);
-	}
+		fprintf(fp, " %d %f %s\n", vett[i].n, vett[i].f, vett[i].c); // Stampo su file
 
 	// Chiusura del file di output
 	fclose(fp);

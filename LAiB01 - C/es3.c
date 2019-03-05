@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "tool.h"
 
 struct Data
 {
@@ -39,14 +40,7 @@ int main()
 	lst = inizializzaLista();
 
 	// Apro il file di input in modalità lettura
-	fp = fopen("data_es2_input","r");
-
-	// Controllo se l'apertura sia andata a buon fine. In caso negativo esco
-	if (fp==NULL)
-	{
-		fprintf(stderr, "Apertura file di input non riuscita\n");
-		return -1;
-	}
+	fp = secFopenRead("data_es2_input");
 
 	// Ciclo per leggere tutte le righe. Ogni volta leggo la riga e la aggiungo alla lista
 	while(fscanf(fp," %d %f %7s\n",&(d.n), &(d.f), d.c) != EOF ) aggiungiLista(&lst, d);
@@ -55,12 +49,7 @@ int main()
 	fclose(fp);
 
 	// Apro il file di output in modalità scrittura
-	fp = fopen("data_es2_output","w");
-	if (fp==NULL)
-	{
-		fprintf(stderr, "Apertura file di output non riuscita\n");
-		return -2;
-	}
+	fp = secFopenWrite("data_es2_output");
 	
 	// Ciclo per visitare la lista al contrario
 	attuale = lst.coda;
