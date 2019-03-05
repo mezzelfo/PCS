@@ -1,6 +1,8 @@
 
 .DS_Store
 *.out
+*.o
+*.bin
 *.pyc
 PCSpylaib01/venv/
 .vscode/
