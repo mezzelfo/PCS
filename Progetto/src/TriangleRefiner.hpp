@@ -16,14 +16,14 @@ namespace GeDiM
 		GenericMesh* meshPointer;
 		vector<unsigned int> idCellsToRefine;
 	public:
-		TriangleRefiner() { meshPointer = NULL; }
-		~TriangleRefiner() { }
+		TriangleRefiner();
+		~TriangleRefiner();
 
-		void SetMesh( GenericMesh& mesh ) { meshPointer = &mesh; }
-		void SetNumberCellsToRefine( const unsigned int& value ) { idCellsToRefine.reserve(value); }
-		void AddCellId( const unsigned int& value ) { idCellsToRefine.push_back(value); }
-
-	  Output::ExitCodes RefineMesh() { return Output::Success; }
+		void SetMesh( GenericMesh& mesh );
+		void SetNumberCellsToRefine( const unsigned int& value );
+		void AddCellId( const unsigned int& value );
+		
+		Output::ExitCodes RefineMesh();
 	};
 }
 
