@@ -4,6 +4,7 @@
 #include <iostream>
 #include "TriangleRefiner.hpp"
 
+
 using namespace GeDiM;
 using namespace Eigen;
 
@@ -34,10 +35,16 @@ int main(int argc, char** argv)
 	Output::PrintGenericMessage("Triangle ha prodotto una mesh contenente %d triangoli, %d nodi e %d lati", true, mesh.NumberOfCells(), mesh.NumberOfPoints(), mesh.NumberOfEdges());
 
 	/// REFINE MESH
+	const int prob = 30;
 	TriangleRefiner refiner;
 	refiner.SetMesh(mesh);
-	refiner.SetNumberCellsToRefine(1);
-	refiner.AddCellId(16);
+	refiner.SetNumberCellsToRefine(mesh.NumberOfCells()*prob/100);
+
+
+	srand (time(NULL));
+	for(int i=0; i < mesh.NumberOfCells(); i++)
+		if (rand() % 100 < prob)
+			refiner.AddCellId(i);
 	refiner.RefineMesh();
 
 	/// OUTPUT MESH TO MATLAB SCRIPT FOR VISUALIZATION
