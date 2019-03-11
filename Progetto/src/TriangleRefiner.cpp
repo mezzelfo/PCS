@@ -1,4 +1,5 @@
 #include "TriangleRefiner.hpp"
+#include <set>
 
 namespace GeDiM
 {
@@ -11,11 +12,19 @@ namespace GeDiM
     {
     	idCellsToRefine.shrink_to_fit();
     	std::cout << "Il numero di celle da rifinire: " << idCellsToRefine.size() << std::endl;
-    	std::set<GenericEdge> idEdgesToCut;
-    	for(auto& t : idCellsToRefine)
-    		idEdgesToCut.push_back(t.idLongestEdge());
+    	std::set<unsigned int> idEdgesToCut;
+    	for(unsigned int t : idCellsToRefine)
+    	{
+    		TriangleCell* ptr = (TriangleCell*)meshPointer->Cell(t);
+    		idEdgesToCut.insert(ptr->idLongestEdge());
+    	}
 
-    	//while(not idCellsToRefine.empty())
+    	for (unsigned int p : idEdgesToCut)
+    	{
+    		std::cout<<p<<'\n';
+    	}
+    	
+        //while(not idCellsToRefine.empty())
     	
 
 

@@ -3,6 +3,7 @@
 
 #include "GenericDomain.hpp"
 #include "GenericMesh.hpp"
+#include "TriangleCell.hpp"
 #include "Eigen/Eigen"
 
 using namespace std;
