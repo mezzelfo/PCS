@@ -38,13 +38,12 @@ int main(int argc, char** argv)
 	const int prob = 30;
 	TriangleRefiner refiner;
 	refiner.SetMesh(mesh);
-	refiner.SetNumberCellsToRefine(mesh.NumberOfCells()*prob/100);
 
 
-	srand (time(NULL));
+	srand(1);
 	for(int i=0; i < mesh.NumberOfCells(); i++)
 		if (rand() % 100 < prob)
-			refiner.AddCellId(i);
+			refiner.AddCellToRefine(i);
 	refiner.RefineMesh();
 
 	/// OUTPUT MESH TO MATLAB SCRIPT FOR VISUALIZATION

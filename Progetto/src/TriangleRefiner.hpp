@@ -6,6 +6,8 @@
 #include "TriangleCell.hpp"
 #include "Eigen/Eigen"
 
+#include <set>
+
 using namespace std;
 using namespace Eigen;
 
@@ -15,15 +17,13 @@ namespace GeDiM
 	{
 	protected:
 		GenericMesh* meshPointer;
-		vector<unsigned int> idCellsToRefine;
+		set<unsigned int> idEdgesToCut;
 	public:
 		TriangleRefiner();
 		~TriangleRefiner();
 
 		void SetMesh( GenericMesh& mesh );
-		void SetNumberCellsToRefine( const unsigned int& value );
-		void AddCellId( const unsigned int& value );
-		
+		void AddCellToRefine( const unsigned int& value );
 		Output::ExitCodes RefineMesh();
 	};
 }
