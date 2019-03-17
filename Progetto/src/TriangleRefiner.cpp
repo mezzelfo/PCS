@@ -7,45 +7,66 @@ namespace GeDiM
 	void TriangleRefiner::SetMesh( GenericMesh& mesh ) {meshPointer = &mesh; }
     void TriangleRefiner::AddCellToRefine( const unsigned int& value )
     {
-    	TriangleCell* ptr = (TriangleCell*)meshPointer->Cell(value);
-    	unsigned int longestId = ptr->idLongestEdge();
-    	
-    	if (idEdgesToCut.insert(longestId).second == false) return;
-
-    	GenericEdge* latolungo = meshPointer->Edge(longestId);
-    	GenericCell* other = (GenericCell*)latolungo->RightCell();
-    	if ((other == NULL) || (other == ptr))
-    		other = (GenericCell*)latolungo->LeftCell();
-    	if ((other != NULL) && (other != ptr))
-    		AddCellToRefine(other->Id());
+        TriangleCell* cellaAttuale = (TriangleCell*)meshPointer->Cell(value);
+        cellaAttuale->ruotafinoaquandononciloazzikka();
+        // Se la cella che ho in input è gia stata doomed to be cut non c'è più nulla da fare
+        if (cellaAttuale->HasProperty("CellaDaRaffinare"))
+            return;
+        // Altrimenti la setto da tagliare
+        CellsToCut.insert(cellaAttuale);
+        cellaAttuale->AddProperty("CellaDaRaffinare",(void*)true);
+        // E mi registro qual'è il lato più lungo
+        GenericEdge* longestEdge = (GenericEdge*)cellaAttuale->LongestEdgePtr();
+        cellaAttuale->AddProperty("LongestEdge",(void*)longestEdge);
+        // Poi registro sul lato più lungo il fatto che sia da tagliare
+        longestEdge->AddProperty("LatoDaTagliare",(void*)true);
+        // Poi ricorro sul vicino
+        // Mi chiedo se esite il vicino destro e se non sono io
+        if ((longestEdge->RightCell() != NULL) and (longestEdge->RightCell() != cellaAttuale))
+            AddCellToRefine(longestEdge->RightCell()->Id());
+        else if ((longestEdge->LeftCell() != NULL) and (longestEdge->LeftCell() != cellaAttuale))
+            AddCellToRefine(longestEdge->LeftCell()->Id());
+        
+        return;
     }
     Output::ExitCodes TriangleRefiner::RefineMesh()
     {
-    	while(idEdgesToCut.size() != 0)
+    	while(not CellsToCut.empty())
     	{
-    		auto asdrubale = idEdgesToCut.begin();
-    		unsigned int idToCut = *asdrubale;
-    		GenericEdge* ptr = meshPointer->Edge(idToCut);
-    		cout << ptr->Id() << endl;
+            TriangleCell* cellaAttuale = *CellsToCut.begin();
+            GenericEdge* latolungo = (GenericEdge*)cellaAttuale->GetProperty("LongestEdge");
 
-    		Vector3d puntomedio = {
-    			(ptr->Point(0)->X()+ptr->Point(1)->X())/2.0,
-    			(ptr->Point(0)->Y()+ptr->Point(1)->Y())/2.0,
-    			0};
+            Vector3d puntomedio = {
+                (latolungo->Point(0)->X()+latolungo->Point(1)->X())/2.0,
+                (latolungo->Point(0)->Y()+latolungo->Point(1)->Y())/2.0,
+                0
+            };
 
-    		cout << "Il lato "<<ptr->Id() << " ha "<<ptr->NumberOfChilds() << endl;
-    		meshPointer->CutEdgeWithPoints(idToCut, vector<Vector3d>(1,puntomedio));
-    		cout << "Il lato "<<ptr->Id() << " ha "<<ptr->NumberOfChilds() << endl;
-    		for(int i = 0; i<2; i++)
-    		{
-    			GenericEdge* figlio = (GenericEdge*)ptr->Child(i);
-    			cout << figlio->Point(0)->X() << ";" << figlio->Point(0)->Y() << ";"
-    				 << figlio->Point(1)->X() << ";" << figlio->Point(1)->Y() << endl;
-    		}
+            meshPointer->CutEdgeWithPoints(latolungo->Id(),vector<Vector3d>(1,puntomedio));
+
+            int latidatagliare = 0;
+            for(int i=0;i<3;i++)
+                if(cellaAttuale->Edge(i)->HasProperty("LatoDaTagliare"))
+                    latidatagliare++;
+
+            switch (latidatagliare)
+            {
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                default:
+                    cerr <<"Stocazzo"<<endl;
+                    break;
+            }
 
 
 
-    		idEdgesToCut.erase(asdrubale);
+            latolungo->SetState(false);
+    		cellaAttuale->SetState(false);
+    		CellsToCut.erase(cellaAttuale);
     	}
 
     	

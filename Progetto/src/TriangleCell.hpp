@@ -10,8 +10,10 @@ namespace GeDiM
 	class TriangleCell : public GeDiM::GenericCell
 	{
 		public:
-		const unsigned int idLongestEdge() const;
+		const GenericEdge* LongestEdgePtr() const;
 		static double distance(const GenericPoint* A, const GenericPoint* B);
+		void TurnMeOnBabe();
+		void ruotafinoaquandononciloazzikka();
 	};
 }
 
