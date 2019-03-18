@@ -12,7 +12,6 @@ namespace GeDiM
 		public:
 		const GenericEdge* LongestEdgePtr() const;
 		static double distance(const GenericPoint* A, const GenericPoint* B);
-		void TurnMeOnBabe();
 		void ruotafinoaquandononciloazzikka();
 	};
 }

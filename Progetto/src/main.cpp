@@ -46,6 +46,8 @@ int main(int argc, char** argv)
 			refiner.AddCellToRefine(i);
 	refiner.RefineMesh();
 
+	cout << "Ha funzionato" << endl;
+
 	/// OUTPUT MESH TO MATLAB SCRIPT FOR VISUALIZATION
 	ofstream file("plotTriangleMesh.m", ofstream::out);
 	file << "nodes = [";

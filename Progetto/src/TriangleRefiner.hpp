@@ -17,7 +17,7 @@ namespace GeDiM
 	{
 	protected:
 		GenericMesh* meshPointer;
-		set<TriangleCell*> CellsToCut;
+		set<GenericCell*> CellsToCut;
 	public:
 		TriangleRefiner();
 		~TriangleRefiner();

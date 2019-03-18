@@ -6,3 +6,6 @@
 *.pyc
 PCSpylaib01/venv/
 .vscode/
+Progetto/src/ProgettoCppWin.depend
+Progetto/src/ProgettoCppWin.cbp
+Progetto/src/ProgettoCppWin.layout

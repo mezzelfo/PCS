@@ -26,14 +26,14 @@ namespace GeDiM
             AddCellToRefine(longestEdge->RightCell()->Id());
         else if ((longestEdge->LeftCell() != NULL) and (longestEdge->LeftCell() != cellaAttuale))
             AddCellToRefine(longestEdge->LeftCell()->Id());
-        
+
         return;
     }
     Output::ExitCodes TriangleRefiner::RefineMesh()
     {
     	while(not CellsToCut.empty())
     	{
-            TriangleCell* cellaAttuale = *CellsToCut.begin();
+            GenericCell* cellaAttuale = *CellsToCut.begin();
             GenericEdge* latolungo = (GenericEdge*)cellaAttuale->GetProperty("LongestEdge");
 
             Vector3d puntomedio = {
@@ -44,24 +44,42 @@ namespace GeDiM
 
             meshPointer->CutEdgeWithPoints(latolungo->Id(),vector<Vector3d>(1,puntomedio));
 
-            int latidatagliare = 0;
-            for(int i=0;i<3;i++)
-                if(cellaAttuale->Edge(i)->HasProperty("LatoDaTagliare"))
-                    latidatagliare++;
+            GenericPoint* A = (GenericPoint*)latolungo->Point(0);
+            GenericPoint* B = (GenericPoint*)latolungo->Point(1);
+            GenericPoint* D = (GenericPoint*)cellaAttuale->Point(2);
 
-            switch (latidatagliare)
-            {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                default:
-                    cerr <<"Stocazzo"<<endl;
-                    break;
-            }
 
+            GenericEdge* L1=(GenericEdge*)latolungo->Child(0);
+            GenericPoint* C = (GenericPoint*)L1->Point(1);
+            GenericEdge * latoNuovo= meshPointer->CreateEdge();
+            meshPointer->AddEdge(latoNuovo);
+            latoNuovo->AddPoint(C);
+            latoNuovo->AddPoint(D);
+            latoNuovo->AllocateCells(2);
+
+
+
+            GenericCell* Pippo = meshPointer->CreateCell();
+            meshPointer->AddCell(Pippo);
+            list<unsigned int> listalati = {L1->Id(),latoNuovo->Id(),cellaAttuale->Edge(2)->Id()};
+            list<unsigned int> listapunti = {A->Id(),C->Id(),D->Id()};
+            meshPointer->CreateCellChild2D(*Pippo, *cellaAttuale,listalati,listapunti,false);
+            for(int i = 0; i < 3; i++)
+                if(Pippo->Edge(i)->HasProperty("LatoDaTagliare"))
+                    AddCellToRefine(Pippo->Id());
+            
+            cout << CellsToCut.size() << endl;
+
+
+            /*GenericEdge* L2 =(GenericEdge*)latolungo->Child(1);
+            GenericCell* Pippo2 = meshPointer->CreateCell();
+            meshPointer->AddCell(Pippo2);
+            list<unsigned int> listalati2 = {L2->Id(),cellaAttuale->Edge(2)->Id(),latoNuovo->Id()};
+            list<unsigned int> listapunti2 = {C->Id(),B->Id(),D->Id()};
+            meshPointer->CreateCellChild2D(*Pippo2, *cellaAttuale,listalati2,listapunti2,false);
+            for(int i = 0; i < 3; i++)
+                if(Pippo2->Edge(i)->HasProperty("LatoDaTagliare"))
+                    AddCellToRefine(Pippo2->Id());*/
 
 
             latolungo->SetState(false);
@@ -69,7 +87,7 @@ namespace GeDiM
     		CellsToCut.erase(cellaAttuale);
     	}
 
-    	
+
     	return Output::Success;
     }
 }
