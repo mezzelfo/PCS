@@ -35,6 +35,7 @@ namespace GeDiM
     	{
             GenericCell* cellaAttuale = *CellsToCut.begin();
             GenericEdge* latolungo = (GenericEdge*)cellaAttuale->GetProperty("LongestEdge");
+            cout << "Raffino la cella numero: " << cellaAttuale->Id() << endl;
 
             Vector3d puntomedio = {
                 (latolungo->Point(0)->X()+latolungo->Point(1)->X())/2.0,
@@ -44,6 +45,7 @@ namespace GeDiM
 
             meshPointer->CutEdgeWithPoints(latolungo->Id(),vector<Vector3d>(1,puntomedio));
 
+
             GenericPoint* A = (GenericPoint*)latolungo->Point(0);
             GenericPoint* B = (GenericPoint*)latolungo->Point(1);
             GenericPoint* D = (GenericPoint*)cellaAttuale->Point(2);
@@ -51,7 +53,7 @@ namespace GeDiM
 
             GenericEdge* L1=(GenericEdge*)latolungo->Child(0);
             GenericPoint* C = (GenericPoint*)L1->Point(1);
-            GenericEdge * latoNuovo= meshPointer->CreateEdge();
+            GenericEdge* latoNuovo= meshPointer->CreateEdge();
             meshPointer->AddEdge(latoNuovo);
             latoNuovo->AddPoint(C);
             latoNuovo->AddPoint(D);
@@ -59,27 +61,40 @@ namespace GeDiM
 
 
 
+            //Crea la prima cella
             GenericCell* Pippo = meshPointer->CreateCell();
             meshPointer->AddCell(Pippo);
             list<unsigned int> listalati = {L1->Id(),latoNuovo->Id(),cellaAttuale->Edge(2)->Id()};
             list<unsigned int> listapunti = {A->Id(),C->Id(),D->Id()};
             meshPointer->CreateCellChild2D(*Pippo, *cellaAttuale,listalati,listapunti,false);
-            for(int i = 0; i < 3; i++)
-                if(Pippo->Edge(i)->HasProperty("LatoDaTagliare"))
-                    AddCellToRefine(Pippo->Id());
-            
+
+
+
             cout << CellsToCut.size() << endl;
 
-
-            /*GenericEdge* L2 =(GenericEdge*)latolungo->Child(1);
+            //Crea la seconda cella
+            GenericEdge* L2 =(GenericEdge*)latolungo->Child(1);
             GenericCell* Pippo2 = meshPointer->CreateCell();
             meshPointer->AddCell(Pippo2);
             list<unsigned int> listalati2 = {L2->Id(),cellaAttuale->Edge(2)->Id(),latoNuovo->Id()};
             list<unsigned int> listapunti2 = {C->Id(),B->Id(),D->Id()};
             meshPointer->CreateCellChild2D(*Pippo2, *cellaAttuale,listalati2,listapunti2,false);
-            for(int i = 0; i < 3; i++)
-                if(Pippo2->Edge(i)->HasProperty("LatoDaTagliare"))
-                    AddCellToRefine(Pippo2->Id());*/
+
+            //controlla se bisogna tagliare altri lati nel figlio 1
+            if(Pippo->Edge(2)->HasProperty("LatoDaTagliare")){
+                     cout << "Rimando la cella numero: " << Pippo->Id() << endl;
+                     cout << "a destra la numero: " << Pippo->Edge(2)->RightCell()->Id() << endl;
+                     cout << "a sinistra la numero: " << Pippo->Edge(2)->LeftCell()->Id() << endl;
+
+                    AddCellToRefine(Pippo->Id());
+            }
+            //controlla se bisogna tagliare altri lati nel figlio 2
+            if(Pippo2->Edge(2)->HasProperty("LatoDaTagliare")){
+                     cout << "Rimando la cella numero: " << Pippo2->Id() << endl;
+                     cout << "a destra la numero: " << Pippo2->Edge(2)->RightCell()->Id() << endl;
+                     cout << "a sinistra la numero: " << Pippo2->Edge(2)->LeftCell()->Id() << endl;
+                    AddCellToRefine(Pippo2->Id());
+                }
 
 
             latolungo->SetState(false);

@@ -1367,7 +1367,7 @@ namespace GeDiM
 					GenericEdge* edge = edges[idEdge];
 					//SE NON HA FIGLI IL LATO:
 					//1) AGGIUNGO IL LATO ALLA CELLA
-					//2) AGGIORNO LA CELLA DEL LATO PADRE CON LA CELLA FIGLIO
+					//2) AGGIORNO LA CELLA DEL LATO PADRE CON LA CELLA FIGLIOmeshPointer->UpdateCell(Pippo->Id(),latoNuovo->Id());
 					if(!edge->HasChilds())
 					{
 						cellChild.AddEdge(edge);
@@ -1761,7 +1761,7 @@ namespace GeDiM
 		unsigned int numEdgesFaceChild = numberEdges - 1 + numberEdgesChild;
 		faceChild.InitializeEdges(numEdgesFaceChild);
 		faceChild.InitializePoints(numEdgesFaceChild);
-		faceChild.AllocateFaces(numEdgesFaceChild);
+		faceChild.AllocateFaces(numEdgesFaceChild);meshPointer->UpdateCell(Pippo->Id(),latoNuovo->Id());
 		faceChild.AllocateCells(2);
 		AddFace(&faceChild);
 
