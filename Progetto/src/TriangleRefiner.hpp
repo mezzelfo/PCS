@@ -3,10 +3,7 @@
 
 #include "GenericDomain.hpp"
 #include "GenericMesh.hpp"
-#include "TriangleCell.hpp"
 #include "Eigen/Eigen"
-
-#include <set>
 
 using namespace std;
 using namespace Eigen;
@@ -17,7 +14,8 @@ namespace GeDiM
 	{
 	protected:
 		GenericMesh* meshPointer;
-		set<GenericCell*> CellsToCut;
+		vector<bool> cellsToCut;
+		vector<bool> edgesToCut;
 	public:
 		TriangleRefiner();
 		~TriangleRefiner();
@@ -26,6 +24,10 @@ namespace GeDiM
 		void AddCellToRefine( const unsigned int& value );
 		Output::ExitCodes RefineMesh();
 	};
+
+	double distance(const GenericPoint* A, const GenericPoint* B);
+	const GenericEdge* LongestEdgePtr(const GenericCell* cell);
+	Output::ExitCodes correggiOrientamento(GenericCell* cell);
 }
 
 #endif

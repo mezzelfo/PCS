@@ -1761,7 +1761,7 @@ namespace GeDiM
 		unsigned int numEdgesFaceChild = numberEdges - 1 + numberEdgesChild;
 		faceChild.InitializeEdges(numEdgesFaceChild);
 		faceChild.InitializePoints(numEdgesFaceChild);
-		faceChild.AllocateFaces(numEdgesFaceChild);meshPointer->UpdateCell(Pippo->Id(),latoNuovo->Id());
+		faceChild.AllocateFaces(numEdgesFaceChild);
 		faceChild.AllocateCells(2);
 		AddFace(&faceChild);
 
