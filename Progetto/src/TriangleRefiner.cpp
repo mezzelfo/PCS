@@ -37,7 +37,7 @@ namespace GeDiM
         else if (cell->Point(1) == P)
         {
             // ruoto da una parte
-            cell->InsertPoint(cell->Point(2),1); 
+            cell->InsertPoint(cell->Point(2),1);
             cell->InsertPoint(cell->Point(0),2);
             cell->InsertPoint(P,0);
 
@@ -107,6 +107,9 @@ namespace GeDiM
                 const GenericPoint* P0 = longestEdge->Point(0);
                 const GenericPoint* P1 = longestEdge->Point(1);
                 const GenericPoint* Pp = cell->Point(2); // Punto opposto al lato lungo
+                const GenericEdge* L0 = cell->Edge(1);
+                const GenericEdge* L1 = cell->Edge(2);
+                bool hafigli = false;
 
 
                 GenericPoint* Pm;
@@ -147,12 +150,22 @@ namespace GeDiM
 
                     // Creazione del punto medio
                     Pm->SetCoordinates(0.5*(P0->Coordinates()+P1->Coordinates()));
+
+                    // Inserisco i punti su cui insiste il primo segmento
+                    E0->AddPoint(P0);
+                    E0->AddPoint(Pm);
+
+                    // Inserisco i punti su cui insiste il secondo segmento
+                    E1->AddPoint(Pm);
+                    E1->AddPoint(P1);
+
                 }
                 else
                 {
-                    E0 = (GenericEdge*)longestEdge->Child(0);
-                    E1 = (GenericEdge*)longestEdge->Child(1);
-                    Pm = meshPointer->Point(E0->Point(0)->Id());
+                    hafigli = true;
+                    E0 = (GenericEdge*)longestEdge->Child(1);  //bisogna invertire gli indici per rispettare l'orientamento
+                    E1 = (GenericEdge*)longestEdge->Child(0);
+                    Pm = meshPointer->Point(E0->Point(1)->Id());
 
                     Ee = meshPointer->CreateEdge();    // Mediana del lato lungo
                     meshPointer->AddEdge(Ee);
@@ -168,15 +181,10 @@ namespace GeDiM
                     cell->AddChild(C1);
                     C0->SetFather(cell);
                     C1->SetFather(cell);
+
+
                 }
 
-                // Inserisco i punti su cui insiste il primo segmento
-                E0->AddPoint(P0);
-                E0->AddPoint(Pm);
-
-                // Inserisco i punti su cui insiste il secondo segmento
-                E1->AddPoint(Pm);
-                E1->AddPoint(P1);
 
                 // Inserisco i punti su cui insiste la mediana
                 Ee->AddPoint(Pp);
@@ -188,7 +196,7 @@ namespace GeDiM
                 C0->AddPoint(P0);
                 // Inserisco i lati su cui insite la prima sotto-cella
                 C0->AddEdge(Ee);
-                C0->AddEdge(cell->Edge(2));
+                C0->AddEdge(L1);
                 C0->AddEdge(E0);
 
                 // Inserisco i punti su cui insite la seconda sotto-cella
@@ -197,7 +205,7 @@ namespace GeDiM
                 C1->AddPoint(Pp);
                 // Inserisco i lati su cui insite la seconda sotto-cella
                 C1->AddEdge(E1);
-                C1->AddEdge(cell->Edge(1));
+                C1->AddEdge(L0);
                 C1->AddEdge(Ee);
 
                 // Aggiorno le informazioni di vicinanza
@@ -205,11 +213,16 @@ namespace GeDiM
 
                 // Per i lati RightCell = cells[0]
                 // Primo/secondo sottosegmento si appoggia all'ignoto da una parte e da C0/C1 sull'altra
+
+                // Aggiornare la vicinanza di L0      TO DO
+                // Aggiornare la vicinanza di L1      TO DO
+                // Aggiornare  la vicinanza delle celle adiacenti a C1 e C0
+
                 E0->AllocateCells(2);
-                //E0->InsertCell(bho0,0);           TODO
+                //E0->InsertCell(bho0,0);           Solo se ha figli
                 E0->InsertCell(C0,1);
                 E1->AllocateCells(2);
-                //E1->InsertCell(bho0,0);           TODO
+                //E1->InsertCell(bho0,0);           Solo se ha figli
                 E1->InsertCell(C1,1);
 
                 // Mediana del lato lungo
@@ -219,32 +232,43 @@ namespace GeDiM
                 // Prima sottocella
                 C0->AllocateCells(3);
                 C0->InsertCell(C1,0);
-                //C0->InsertCell(bho2,1);           TODO
-                //C0->InsertCell(bho0,2);           TODO
+                C0->InsertCell((L1->RightCell()),1);
+                //C0->InsertCell(bho0,2);           Solo se ha figli
 
                 // Seconda sottocella
                 C1->AllocateCells(3);
-                //C1->InsertCell(bho0,0);           TODO
-                //C1->InsertCell(bho1,1);           TODO
+                //C1->InsertCell(bho0,0);           Solo se ha figli
+                C1->InsertCell((L0->RightCell()),1);
                 C1->InsertCell(C0,2);
+
+                if (hafigli){
+                   E0->InsertCell((GenericCell*)longestEdge->RightCell()->Child(1),0);
+                   E1->InsertCell((GenericCell*)longestEdge->RightCell()->Child(0),0);
+
+                   C0->InsertCell(E0->RightCell(),2);
+                   C1->InsertCell(E1->RightCell(),0);
+
+                }
+
+
 
                 // Ora ho tagliato il lato più lungo e ho raffinato la cella
                 cellsToCut.at(cellId) = false;
                 edgesToCut.at(longestEdge->Id()) = false; // Forse questa riga non va qua ma nell'if        TODO
-                
+
                 // Se una delle celle ha almeno un lato da tagliare è da raffinare
                 if (edgesToCut.at(C0->Edge(0)->Id()) or
                     edgesToCut.at(C0->Edge(1)->Id()) or
                     edgesToCut.at(C0->Edge(2)->Id()))
                     AddCellToRefine(C0->Id());
-                
+
                 if (edgesToCut.at(C1->Edge(0)->Id()) or
                     edgesToCut.at(C1->Edge(1)->Id()) or
                     edgesToCut.at(C1->Edge(2)->Id()))
                     AddCellToRefine(C1->Id());
-                
-                
-                
+
+
+
                 // Ricontrollo tutto il vettore
                 cellsToCut.at(cellId) = false;
                 cellId = 0;
@@ -253,6 +277,6 @@ namespace GeDiM
     	return Output::Success;
     }
 
-    
+
 
 }
