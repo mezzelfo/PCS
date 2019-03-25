@@ -24,6 +24,8 @@ namespace GeDiM
 		void AddCellToRefine( const unsigned int& value );
 		Output::ExitCodes Raffinamento4latiDatagliare();
 		Output::ExitCodes RefineMesh();
+
+		void tagliaLato(GenericEdge* l);
 	};
 
 	double distance(const GenericPoint* A, const GenericPoint* B);

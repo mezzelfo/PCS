@@ -119,6 +119,35 @@ namespace GeDiM
 
         return;
     }
+    void TriangleRefiner::tagliaLato(GenericEdge* l)
+    {
+        assert(l->NumberOfPoints() == 2);
+        const GenericPoint*P0 = l->Point(0);
+        const GenericPoint*P1 = l->Point(1);
+        
+        GenericPoint* Pm = meshPointer->CreatePoint();
+        GenericEdge* E0 = meshPointer->CreateEdge();
+        GenericEdge* E1 = meshPointer->CreateEdge();
+
+        meshPointer->AddPoint(Pm);
+        meshPointer->AddEdge(E0);
+        meshPointer->AddEdge(E1);
+        
+        Pm->SetCoordinates(0.5*(P0->Coordinates()+P1->Coordinates()));
+                
+        E0->AddPoint(P0);
+        E0->AddPoint(Pm);
+        E1->AddPoint(Pm);
+        E1->AddPoint(P1);
+
+        E0->SetFather(l);
+        E1->SetFather(l);
+
+        assert(l->NumberOfChilds() == 0);
+        l->AddChild(E0);
+        l->AddChild(E1);
+        
+    }
     Output::ExitCodes TriangleRefiner::RefineMesh()
     {
     	for(unsigned int cellId = 0; cellId < meshPointer->NumberOfCells(); cellId++)
@@ -248,51 +277,40 @@ namespace GeDiM
 
                 E0->AddCell(C0);
                 E1->AddCell(C1);                //E0->AllocateCells(2);
-                //E0->InsertCell(bho0,0);           Solo se ha figli
-                //E0->InsertCell(C0,1);
-                //E1->AllocateCells(2);
-                //E1->InsertCell(bho0,0);           Solo se ha figli
-                //E1->InsertCell(C1,1);
+                assert(E0->NumberOfCells() <= 2);
+                assert(E1->NumberOfCells() <= 2);
 
                 // Mediana del lato lungo
                 Ee->AddCell(C0);
                 Ee->AddCell(C1);
+
+                assert((L1->Cell(0) == cell) or (L1->Cell(1) == cell));
+                assert((L0->Cell(0) == cell) or (L0->Cell(1) == cell));
 
                 if (L1->Cell(0) == cell)
                     L1->InsertCell(C0,0);
                 else if (L1->Cell(1) == cell)
                     L1->InsertCell(C0,1);
                 else
-                    cerr << "Un altro errore\n";
+                {
+                    cerr << "Un altro errore1\n";
+                    cerr << cell << '\t' << L1->Cell(0) << '\t' << L1->Cell(1) << '\n';
+                }
+                    
 
                 if (L0->Cell(0) == cell)
                     L0->InsertCell(C1,0);
                 else if (L0->Cell(1) == cell)
                     L0->InsertCell(C1,1);
                 else
-                    cerr << "Un altro errore\n";
-
-                /*
-                // Prima sottocella
-                C0->AllocateCells(3);
-                C0->InsertCell(C1,0);
-                C0->InsertCell((L1->RightCell()),1);
-                //C0->InsertCell(bho0,2);           Solo se ha figli
-
-                // Seconda sottocella
-                C1->AllocateCells(3);
-                //C1->InsertCell(bho0,0);           Solo se ha figli
-                C1->InsertCell((L0->RightCell()),1);
-                C1->InsertCell(C0,2);
-
-
-                */
-
-
+                {
+                    cerr << "Un altro errore2\n";
+                    cerr << cell << '\t' << L0->Cell(0) << '\t' << L0->Cell(1) << '\n';
+                }  
+                
                 // Ora ho tagliato il lato più lungo e ho raffinato la cella
                 cellsToCut.at(cellId) = false;
-                //edgesToCut.at(longestEdge->Id()) = false; // Forse questa riga non va qua ma nell'if        TODO
-
+                
                 // Se una delle celle ha almeno un lato da tagliare è da raffinare
                 if (edgesToCut.at(C0->Edge(0)->Id()) or
                     edgesToCut.at(C0->Edge(1)->Id()) or
@@ -315,7 +333,7 @@ namespace GeDiM
 
     //DA INCORPORARE
 
-    Output::ExitCodes TriangleRefiner::  Raffinamento4latiDatagliare()
+    Output::ExitCodes TriangleRefiner::Raffinamento4latiDatagliare()
     {
 
     for(unsigned int cellId = 0; cellId < meshPointer->NumberOfCells(); cellId++)
