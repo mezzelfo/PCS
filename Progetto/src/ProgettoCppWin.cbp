@@ -469,8 +469,6 @@
 		<Unit filename="Output.cpp" />
 		<Unit filename="Output.hpp" />
 		<Unit filename="ProgettoCppWin.cbp" />
-		<Unit filename="TriangleCell.cpp" />
-		<Unit filename="TriangleCell.hpp" />
 		<Unit filename="TriangleRefiner.cpp" />
 		<Unit filename="TriangleRefiner.hpp" />
 		<Unit filename="main.cpp" />

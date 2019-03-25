@@ -22,6 +22,7 @@ namespace GeDiM
 
 		void SetMesh( GenericMesh& mesh );
 		void AddCellToRefine( const unsigned int& value );
+		Output::ExitCodes Raffinamento4latiDatagliare();
 		Output::ExitCodes RefineMesh();
 	};
 
