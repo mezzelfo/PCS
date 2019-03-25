@@ -116,6 +116,16 @@ namespace GeDiM
             AddCellToRefine(longestEdge->RightCell()->Id());
         else if ((longestEdge->LeftCell() != NULL) and (longestEdge->LeftCell() != cellaAttuale))
             AddCellToRefine(longestEdge->LeftCell()->Id());
+        else
+        {
+            // Vuol dire che sono sul bordo
+            if (!((longestEdge->RightCell() == NULL) and (longestEdge->LeftCell() == cellaAttuale)) or
+                ((longestEdge->LeftCell() == NULL) and (longestEdge->RightCell() == cellaAttuale)))
+                {
+                    cerr << "Davvero?\n";
+                    cerr << cellaAttuale << '\t' << longestEdge->RightCell() << '\t' << longestEdge->LeftCell() << '\n';
+                }   
+        }
 
         return;
     }

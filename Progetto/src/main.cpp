@@ -39,6 +39,21 @@ int main(int argc, char** argv)
 	TriangleRefiner refiner;
 	refiner.SetMesh(mesh);
 
+	/// OUTPUT MESH TO MATLAB SCRIPT FOR VISUALIZATION
+	ofstream filePrev("plotTriangleMeshPrev.m", ofstream::out);
+	filePrev << "nodes = [";
+	for(unsigned int i = 0; i < mesh.NumberOfPoints(); i++)
+		filePrev << mesh.Point(i)->Coordinates()(0) << "," <<  mesh.Point(i)->Coordinates()(1) << ";" << endl;
+	filePrev << "];" << endl;
+
+	filePrev << "triangles = [";
+	for(unsigned int i = 0; i < mesh.NumberOfCells(); i++)
+		{
+			filePrev << mesh.Cell(i)->Point(0)->Id()+1 << "," <<  mesh.Cell(i)->Point(1)->Id()+1 << "," << mesh.Cell(i)->Point(2)->Id()+1 << ";" << endl;
+		}
+	filePrev << "];" << endl;
+	filePrev << "trimesh(triangles, nodes(:,1), nodes(:,2));" << endl;
+	filePrev.close();
 
 	srand(1);
 	for(int i=0; i < mesh.NumberOfCells(); i++)
