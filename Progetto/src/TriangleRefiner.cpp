@@ -148,6 +148,20 @@ namespace GeDiM
         l->AddChild(E1);
         
     }
+    void TriangleRefiner::fillCell(GenericCell* c, const vector<const GenericPoint*> pointList, const vector<const GenericEdge*> edgeList)
+    {
+        assert(c->NumberOfPoints() == 0);
+        assert(c->NumberOfEdges() == 0);
+        c->AddPoint(pointList[0]);
+        c->AddPoint(pointList[1]);
+        c->AddPoint(pointList[2]);
+        // Inserisco i lati su cui insite la prima sotto-cella
+        c->AddEdge(edgeList[0]);
+        c->AddEdge(edgeList[1]);
+        c->AddEdge(edgeList[2]);
+        assert(c->NumberOfPoints() == 3);
+        assert(c->NumberOfEdges() == 3);
+    }
     Output::ExitCodes TriangleRefiner::RefineMesh()
     {
     	for(unsigned int cellId = 0; cellId < meshPointer->NumberOfCells(); cellId++)
@@ -159,6 +173,8 @@ namespace GeDiM
 
                 // Ingredienti che mi servono
                 GenericCell* cell = meshPointer->Cell(cellId);
+                assert(cell->NumberOfChilds()==0);
+                
                 GenericEdge* longestEdge = meshPointer->Edge(LongestEdgePtr(cell)->Id());
                 const GenericPoint* P0 = longestEdge->Point(0);
                 const GenericPoint* P1 = longestEdge->Point(1);
@@ -166,108 +182,52 @@ namespace GeDiM
                 GenericEdge* L0 = meshPointer->Edge(cell->Edge(1)->Id());
                 GenericEdge* L1 = meshPointer->Edge(cell->Edge(2)->Id());
 
-                GenericPoint* Pm;
-                GenericEdge *E0, *E1, *Ee;
-                GenericCell *C0, *C1;
+                GenericCell* C0 = meshPointer->CreateCell();
+                GenericCell* C1 = meshPointer->CreateCell();
+                meshPointer->AddCell(C0);
+                meshPointer->AddCell(C1);
+                cellsToCut.push_back(false);
+                cellsToCut.push_back(false);
 
+                GenericEdge* Ee = meshPointer->CreateEdge();
+                meshPointer->AddEdge(Ee);
+                edgesToCut.push_back(false);
+
+                GenericPoint* Pm;
+                GenericEdge *E0, *E1;
+                
                 if (not(longestEdge->HasChilds()))
                 {
-                    // Creo vuoti tutti gli oggetti nuovi e li aggiungo alla struttura
-                    Pm = meshPointer->CreatePoint();  // Punto medio del lato lungo
-                    meshPointer->AddPoint(Pm);
-                    E0 = meshPointer->CreateEdge();    // Primo sotto-segmento del lato lungo
-                    meshPointer->AddEdge(E0);
-                    E1 = meshPointer->CreateEdge();    // Secondo sotto-segmento del lato lungo
-                    meshPointer->AddEdge(E1);
-                    Ee = meshPointer->CreateEdge();    // Mediana del lato lungo
-                    meshPointer->AddEdge(Ee);
-                    C0 = meshPointer->CreateCell();    // Prima sotto-cella
-                    meshPointer->AddCell(C0);
-                    C1 = meshPointer->CreateCell();    // Seconda sotto-cella
-                    meshPointer->AddCell(C1);
+                    tagliaLato(longestEdge);
+                    E0 = (GenericEdge*)longestEdge->Child(0);
+                    E1 = (GenericEdge*)longestEdge->Child(1);
+                    Pm = meshPointer->Point(E0->Point(1)->Id());
                     // Devo allungare i vettori di bool
-                    // Ho creato 3 edge e 2 cell
+                    // Ho creato 2 edge (i due sotto lati nella funzione taglialato)
                     edgesToCut.push_back(false);
                     edgesToCut.push_back(false);
-                    edgesToCut.push_back(false);
-                    cellsToCut.push_back(false);
-                    cellsToCut.push_back(false);
-
-                    // Aggiorno le informazioni di parentela
-                    longestEdge->AddChild(E0);
-                    longestEdge->AddChild(E1);
-                    E0->SetFather(longestEdge);
-                    E1->SetFather(longestEdge);
-
-                    cell->AddChild(C0);
-                    cell->AddChild(C1);
-                    C0->SetFather(cell);
-                    C1->SetFather(cell);
-
-                    // Imposto le coordinate del punto medio
-                    Pm->SetCoordinates(0.5*(P0->Coordinates()+P1->Coordinates()));
-
-                    // Inserisco i punti su cui insiste il primo segmento
-                    E0->AddPoint(P0);
-                    E0->AddPoint(Pm);
-
-                    // Inserisco i punti su cui insiste il secondo segmento
-                    E1->AddPoint(Pm);
-                    E1->AddPoint(P1);
-
                 }
                 else
                 {
                     E0 = (GenericEdge*)longestEdge->Child(1);  //bisogna invertire gli indici per rispettare l'orientamento
                     E1 = (GenericEdge*)longestEdge->Child(0);
                     Pm = meshPointer->Point(E0->Point(0)->Id());  //sono nel passato
-                    if (Pm != E1->Point(1))
-                        cerr << "Sticazzi2412241\n";
-
-                    Ee = meshPointer->CreateEdge();    // Mediana del lato lungo
-                    meshPointer->AddEdge(Ee);
-
-                    C0 = meshPointer->CreateCell();    // Prima sotto-cella
-                    meshPointer->AddCell(C0);
-                    C1 = meshPointer->CreateCell();    // Seconda sotto-cella
-                    meshPointer->AddCell(C1);
-
-                    edgesToCut.push_back(false);
-                    cellsToCut.push_back(false);
-                    cellsToCut.push_back(false);
-
-                    cell->AddChild(C0);                // Parentela
-                    cell->AddChild(C1);
-                    C0->SetFather(cell);
-                    C1->SetFather(cell);
-
-                    edgesToCut.at(longestEdge->Id()) = false; // Forse questa riga non va qua ma nell'if        TODO
-
-
+                    assert(Pm == E1->Point(1));
                 }
+
+                cell->AddChild(C0);                // Parentela
+                cell->AddChild(C1);
+                C0->SetFather(cell);
+                C1->SetFather(cell);
 
 
                 // Inserisco i punti su cui insiste la mediana
                 Ee->AddPoint(Pp);
                 Ee->AddPoint(Pm);
 
-                // Inserisco i punti su cui insite la prima sotto-cella
-                C0->AddPoint(Pm);
-                C0->AddPoint(Pp);
-                C0->AddPoint(P0);
-                // Inserisco i lati su cui insite la prima sotto-cella
-                C0->AddEdge(Ee);
-                C0->AddEdge(L1);
-                C0->AddEdge(E0);
-
-                // Inserisco i punti su cui insite la seconda sotto-cella
-                C1->AddPoint(Pm);
-                C1->AddPoint(P1);
-                C1->AddPoint(Pp);
-                // Inserisco i lati su cui insite la seconda sotto-cella
-                C1->AddEdge(E1);
-                C1->AddEdge(L0);
-                C1->AddEdge(Ee);
+                fillCell(C0,{Pm,Pp,P0},{Ee,L1,E0});
+                
+                fillCell(C1,{Pm,P1,Pp},{E1,L0,Ee});
 
                 // Aggiorno le informazioni di vicinanza
                 // Punto medio balza perchè è un punto e i punti non hanno diritti
@@ -284,8 +244,8 @@ namespace GeDiM
                 Ee->AddCell(C0);
                 Ee->AddCell(C1);
 
-                assert((L1->Cell(0) == cell) or (L1->Cell(1) == cell));
-                assert((L0->Cell(0) == cell) or (L0->Cell(1) == cell));
+                //assert((L1->Cell(0) == cell) or (L1->Cell(1) == cell));
+                //assert((L0->Cell(0) == cell) or (L0->Cell(1) == cell));
 
                 if (L1->Cell(0) == cell)
                     L1->InsertCell(C0,0);
@@ -310,6 +270,7 @@ namespace GeDiM
                 
                 // Ora ho tagliato il lato più lungo e ho raffinato la cella
                 cellsToCut.at(cellId) = false;
+                edgesToCut.at(longestEdge->Id()) = false; // Forse questa riga non va qua ma nell'if        TODO
                 
                 // Se una delle celle ha almeno un lato da tagliare è da raffinare
                 if (edgesToCut.at(C0->Edge(0)->Id()) or

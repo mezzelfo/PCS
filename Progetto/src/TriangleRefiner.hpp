@@ -26,6 +26,7 @@ namespace GeDiM
 		Output::ExitCodes RefineMesh();
 
 		void tagliaLato(GenericEdge* l);
+		void fillCell(GenericCell* c, const vector<const GenericPoint*> pointList, const vector<const GenericEdge*> edgeList);
 	};
 
 	double distance(const GenericPoint* A, const GenericPoint* B);
