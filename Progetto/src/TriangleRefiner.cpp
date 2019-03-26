@@ -100,32 +100,25 @@ namespace GeDiM
     }
     void TriangleRefiner::AddCellToRefine( const unsigned int& value )
     {
+        cerr << "Chiamato addcelltorefine su " << value << endl;
         // Se la cella è già stata segnata come da raffinare allora esco subito
-        if (cellsToCut.at(value) == true) return;
+        if ((cellsToCut.at(value) == true) or (meshPointer->Cell(value)->HasChilds())) return;
         // Altrimenti la setto da raffinare
         cellsToCut.at(value) = true;
         // La oriento nel modo corretto
         GenericCell* cellaAttuale = meshPointer->Cell(value);
+        assert(cellaAttuale->NumberOfChilds() == 0);
         correggiOrientamento(cellaAttuale);
 
         // Setto da tagliare il lato più lungo
         const GenericEdge* longestEdge = LongestEdgePtr(cellaAttuale);
         edgesToCut.at(longestEdge->Id()) = true;
         // Poi ricorro sui vicini
-        if ((longestEdge->RightCell() != NULL) and (longestEdge->RightCell() != cellaAttuale))
+        assert((longestEdge->LeftCell() == cellaAttuale) or (longestEdge->RightCell() == cellaAttuale));
+        if (longestEdge->HasRightCell())
             AddCellToRefine(longestEdge->RightCell()->Id());
-        else if ((longestEdge->LeftCell() != NULL) and (longestEdge->LeftCell() != cellaAttuale))
+        if (longestEdge->HasLeftCell())
             AddCellToRefine(longestEdge->LeftCell()->Id());
-        else
-        {
-            // Vuol dire che sono sul bordo
-            if (!((longestEdge->RightCell() == NULL) and (longestEdge->LeftCell() == cellaAttuale)) or
-                ((longestEdge->LeftCell() == NULL) and (longestEdge->RightCell() == cellaAttuale)))
-                {
-                    cerr << "Davvero?\n";
-                    cerr << cellaAttuale << '\t' << longestEdge->RightCell() << '\t' << longestEdge->LeftCell() << '\n';
-                }   
-        }
 
         return;
     }
@@ -136,11 +129,10 @@ namespace GeDiM
         const GenericPoint*P1 = l->Point(1);
         
         GenericPoint* Pm = meshPointer->CreatePoint();
-        GenericEdge* E0 = meshPointer->CreateEdge();
-        GenericEdge* E1 = meshPointer->CreateEdge();
-
         meshPointer->AddPoint(Pm);
+        GenericEdge* E0 = meshPointer->CreateEdge();
         meshPointer->AddEdge(E0);
+        GenericEdge* E1 = meshPointer->CreateEdge();
         meshPointer->AddEdge(E1);
         
         Pm->SetCoordinates(0.5*(P0->Coordinates()+P1->Coordinates()));
@@ -165,7 +157,6 @@ namespace GeDiM
         c->AddPoint(pointList[0]);
         c->AddPoint(pointList[1]);
         c->AddPoint(pointList[2]);
-        // Inserisco i lati su cui insite la prima sotto-cella
         c->AddEdge(edgeList[0]);
         c->AddEdge(edgeList[1]);
         c->AddEdge(edgeList[2]);
@@ -178,6 +169,7 @@ namespace GeDiM
         {
             if (cellsToCut.at(cellId) == true)
             {
+                cerr << "Voglio tagliare " << cellId << endl;
                 // La preparo per essere tagliata
                 AddCellToRefine(cellId);
 
@@ -193,11 +185,12 @@ namespace GeDiM
                 GenericEdge* L1 = meshPointer->Edge(cell->Edge(2)->Id());
 
                 GenericCell* C0 = meshPointer->CreateCell();
-                GenericCell* C1 = meshPointer->CreateCell();
                 meshPointer->AddCell(C0);
+                GenericCell* C1 = meshPointer->CreateCell();
                 meshPointer->AddCell(C1);
                 cellsToCut.push_back(false);
                 cellsToCut.push_back(false);
+                cerr << "Ho creato le celle "<<C0->Id()<<" e " << C1->Id() << endl;
 
                 GenericEdge* Ee = meshPointer->CreateEdge();
                 meshPointer->AddEdge(Ee);
@@ -280,20 +273,42 @@ namespace GeDiM
                 
                 // Ora ho tagliato il lato più lungo e ho raffinato la cella
                 cellsToCut.at(cellId) = false;
-                edgesToCut.at(longestEdge->Id()) = false; // Forse questa riga non va qua ma nell'if        TODO
+
+                // Condizione OP
+                if (longestEdge->HasLeftCell() and longestEdge->HasRightCell())
+                {
+                    if((longestEdge->LeftCell()->NumberOfChilds()==2) and (longestEdge->RightCell()->NumberOfChilds()==2))
+                        edgesToCut.at(longestEdge->Id()) = false; // Forse questa riga non va qua ma nell'if        TODO
+                }
+                else
+                {
+                    // Sono sul bordo
+                    if (longestEdge->HasLeftCell())
+                        if (longestEdge->LeftCell()->NumberOfChilds() == 1)
+                            edgesToCut.at(longestEdge->Id()) = false; // Forse questa riga non va qua ma nell'if        TODO
+                    if (longestEdge->HasRightCell())
+                        if (longestEdge->RightCell()->NumberOfChilds() == 1)
+                            edgesToCut.at(longestEdge->Id()) = false; // Forse questa riga non va qua ma nell'if        TODO                        
+                }
+                
                 
                 // Se una delle celle ha almeno un lato da tagliare è da raffinare
                 if (edgesToCut.at(C0->Edge(0)->Id()) or
                     edgesToCut.at(C0->Edge(1)->Id()) or
                     edgesToCut.at(C0->Edge(2)->Id()))
-                    AddCellToRefine(C0->Id());
+                    {
+                        assert(C0->NumberOfChilds() == 0);
+                        AddCellToRefine(C0->Id());
+                    }
+                    
 
                 if (edgesToCut.at(C1->Edge(0)->Id()) or
                     edgesToCut.at(C1->Edge(1)->Id()) or
                     edgesToCut.at(C1->Edge(2)->Id()))
-                    AddCellToRefine(C1->Id());
-
-
+                    {
+                        assert(C1->NumberOfChilds() == 0);
+                        AddCellToRefine(C1->Id());
+                    }
 
                 // Ricontrollo tutto il vettore
                 cellId = 0;
@@ -306,8 +321,7 @@ namespace GeDiM
 
     Output::ExitCodes TriangleRefiner::Raffinamento4latiDatagliare()
     {
-
-    for(unsigned int cellId = 0; cellId < meshPointer->NumberOfCells(); cellId++)
+        for(unsigned int cellId = 0; cellId < meshPointer->NumberOfCells(); cellId++)
         {
             if (cellsToCut.at(cellId) == true)
             {
