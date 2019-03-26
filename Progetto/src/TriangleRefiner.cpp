@@ -12,10 +12,11 @@ namespace GeDiM
         assert(cell->NumberOfPoints() == 3);
         assert(cell->NumberOfEdges() == 3);
 
+
         double a = distance(cell->Edge(0)->Point(0),cell->Edge(0)->Point(1));
         double b = distance(cell->Edge(1)->Point(0),cell->Edge(1)->Point(1));
         double c = distance(cell->Edge(2)->Point(0),cell->Edge(2)->Point(1));
-        if ((a > b) and (a > c))
+        if ((a >= b) and (a >= c))
             return cell->Edge(0);
         else if (b > c)
             return cell->Edge(1);
@@ -28,10 +29,12 @@ namespace GeDiM
         assert(cell->NumberOfPoints() == 3);
         assert(cell->NumberOfEdges() == 3);
 
+
         // Ruoto i vertici in modo che points[0] == LongestEdgePtr->Point(0)
         // Il punto 0 del lato più lungo è costante
         const GenericEdge* longestEdge = LongestEdgePtr(cell);
         const GenericPoint* P = longestEdge->Point(0);
+        assert((cell->Point(0) == P)or(cell->Point(1) == P)or(cell->Point(2) == P));
         if (cell->Point(0) == P)
         {
             //niente da fare
@@ -125,8 +128,8 @@ namespace GeDiM
     void TriangleRefiner::tagliaLato(GenericEdge* l)
     {
         assert(l->NumberOfPoints() == 2);
-        const GenericPoint*P0 = l->Point(0);
-        const GenericPoint*P1 = l->Point(1);
+        const GenericPoint* P0 = l->Point(0);
+        const GenericPoint* P1 = l->Point(1);
         
         GenericPoint* Pm = meshPointer->CreatePoint();
         meshPointer->AddPoint(Pm);
@@ -214,8 +217,8 @@ namespace GeDiM
                 {
                     E0 = (GenericEdge*)longestEdge->Child(1);  //bisogna invertire gli indici per rispettare l'orientamento
                     E1 = (GenericEdge*)longestEdge->Child(0);
-                    Pm = meshPointer->Point(E0->Point(0)->Id());  //sono nel passato
-                    assert(Pm == E1->Point(1));
+                    Pm = meshPointer->Point(E1->Point(1)->Id());  //sono nel passato
+                    assert(Pm == E0->Point(0));
                 }
 
                 cell->AddChild(C0);                // Parentela
@@ -240,6 +243,8 @@ namespace GeDiM
 
                 E0->AddCell(C0);
                 E1->AddCell(C1);                //E0->AllocateCells(2);
+                if (E0->NumberOfCells() == 3)
+                	cerr << E0->Id() << " ha nella pancia " << E0->Cell(0)->Id() << " e " << E0->Cell(1)->Id() << " e purtroppo " << E0->Cell(2)->Id() << endl;
                 assert(E0->NumberOfCells() <= 2);
                 assert(E1->NumberOfCells() <= 2);
 
@@ -284,10 +289,10 @@ namespace GeDiM
                 {
                     // Sono sul bordo
                     if (longestEdge->HasLeftCell())
-                        if (longestEdge->LeftCell()->NumberOfChilds() == 1)
+                        if (longestEdge->LeftCell()->NumberOfChilds() == 2)
                             edgesToCut.at(longestEdge->Id()) = false; // Forse questa riga non va qua ma nell'if        TODO
                     if (longestEdge->HasRightCell())
-                        if (longestEdge->RightCell()->NumberOfChilds() == 1)
+                        if (longestEdge->RightCell()->NumberOfChilds() == 2)
                             edgesToCut.at(longestEdge->Id()) = false; // Forse questa riga non va qua ma nell'if        TODO                        
                 }
                 
