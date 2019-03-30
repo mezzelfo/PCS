@@ -241,4 +241,4 @@ triangles = [76,77,75;
 76,89,44;
 85,89,75;
 ];
-trimesh(triangles, nodes(:,1), nodes(:,2));
+figure;trimesh(triangles, nodes(:,1), nodes(:,2));

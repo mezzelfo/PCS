@@ -14,24 +14,90 @@ namespace GeDiM
 	{
 	protected:
 		GenericMesh* meshPointer;
-		vector<bool> cellsToCut;
-		vector<bool> edgesToCut;
+		vector<bool> idCellsToRefine;
+		vector<bool> idEdgesToCut;
+
+		bool HasMarkedEdges(const GenericCell* C)
+		{
+			return (idEdgesToCut.at(C->Edge(0)->Id())) or (idEdgesToCut.at(C->Edge(1)->Id())) or (idEdgesToCut.at(C->Edge(2)->Id()));
+		}
+		bool IsOnBorder(const GenericEdge* E)
+		{
+			return (E->Cell(0) == NULL) or (E->Cell(1) == NULL);
+		}
+		GenericPoint* NewPoint()
+		{
+			GenericPoint* P = meshPointer->CreatePoint();
+			meshPointer->AddPoint(P);
+			return P;
+		}
+		GenericEdge* NewEdge()
+		{
+			GenericEdge* E = meshPointer->CreateEdge();
+			meshPointer->AddEdge(E);
+			idEdgesToCut.push_back(false);
+			return E;
+		}
+		GenericCell* NewCell()
+		{
+			GenericCell* C = meshPointer->CreateCell();
+			meshPointer->AddCell(C);
+			idCellsToRefine.push_back(false);
+			return C;
+		}
+		void SetEdgeGeometry(GenericEdge* E, const GenericPoint* P0, const GenericPoint* P1, const GenericCell* right, const GenericCell* left)
+		{
+			//Chiedere a berrone perchè manca E->InitializePoint(2);
+			E->AddPoint(P0);
+			E->AddPoint(P1);
+			E->InitializeCells(2);
+			E->AddCell(right);	//RightCell = cell[0]
+			E->AddCell(left);	//LeftCell = cell[1]
+		}
+		void SetFamily(GenericTreeNode* father, GenericTreeNode* C1, GenericTreeNode* C2)
+		{
+			father->InitializeChilds(2);
+			father->AddChild(C1);
+			father->AddChild(C2);
+			C1->SetFather(father);
+			C2->SetFather(father);
+		}
+		void SetCellPoints(GenericCell* C, const GenericPoint* P0, const GenericPoint* P1, const GenericPoint* P2)
+		{
+			C->InitializePoints(3);
+			C->AddPoint(P0);
+			C->AddPoint(P1);
+			C->AddPoint(P2);
+		}
+		void SetCellEdges(GenericCell* C, const GenericEdge* E0, const GenericEdge* E1, const GenericEdge* E2)
+		{
+			C->InitializeEdges(3);
+			C->AddEdge(E0);
+			C->AddEdge(E1);
+			C->AddEdge(E2);
+		}
+
+		void RotateCell(GenericCell* C);
+		void PensaciTuAlLatoIgnoto(GenericCell* C, GenericEdge* E); // Deve anche far puntare al lato ingoto la cella
+		void RefinePairedTriangles(GenericCell* C0, GenericCell* C1);
+		void RefineBorderTriangle(GenericCell* C0);
+		static double Distance(const GenericPoint* P1, const GenericPoint* P2) {return (P1->Coordinates()-P2->Coordinates()).norm();}
+		const GenericEdge* LongestEdge(const GenericCell* C);
+
 	public:
-		TriangleRefiner();
-		~TriangleRefiner();
+		TriangleRefiner() {meshPointer = NULL;}
+		~TriangleRefiner() {}
 
-		void SetMesh( GenericMesh& mesh );
-		void AddCellToRefine( const unsigned int& value );
-		Output::ExitCodes Raffinamento4latiDatagliare();
+		void SetMesh(GenericMesh& mesh)
+		{
+			meshPointer = &mesh;
+			idEdgesToCut.assign(meshPointer->NumberOfEdges(), false);
+			idCellsToRefine.assign(meshPointer->NumberOfCells(), false);
+		}
+		void PrepareForRefineCell(const unsigned int& value);
+		
 		Output::ExitCodes RefineMesh();
-
-		void tagliaLato(GenericEdge* l);
-		void fillCell(GenericCell* c, const vector<const GenericPoint*> pointList, const vector<const GenericEdge*> edgeList);
 	};
-
-	double distance(const GenericPoint* A, const GenericPoint* B);
-	const GenericEdge* LongestEdgePtr(const GenericCell* cell);
-	Output::ExitCodes correggiOrientamento(GenericCell* cell);
 }
 
 #endif

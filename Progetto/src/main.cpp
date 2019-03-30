@@ -4,7 +4,6 @@
 #include <iostream>
 #include "TriangleRefiner.hpp"
 
-
 using namespace GeDiM;
 using namespace Eigen;
 
@@ -33,38 +32,35 @@ int main(int argc, char** argv)
 	GenericMesh mesh;
 	meshCreator.CreateMesh(domain, mesh);
 	Output::PrintGenericMessage("Triangle ha prodotto una mesh contenente %d triangoli, %d nodi e %d lati", true, mesh.NumberOfCells(), mesh.NumberOfPoints(), mesh.NumberOfEdges());
+	
+
+	/// INPUT MESH TO MATLAB SCRIPT FOR VISUALIZATION
+	ofstream file2("plotTriangleMeshInput.m", ofstream::out);
+	file2 << "nodes = [";
+	for(unsigned int i = 0; i < mesh.NumberOfPoints(); i++)
+		file2 << mesh.Point(i)->Coordinates()(0) << "," <<  mesh.Point(i)->Coordinates()(1) << ";" << endl;
+	file2 << "];" << endl;
+
+	file2 << "triangles = [";
+	for(unsigned int i = 0; i < mesh.NumberOfCells(); i++)
+		{
+			file2 << mesh.Cell(i)->Point(0)->Id()+1 << "," <<  mesh.Cell(i)->Point(1)->Id()+1 << "," << mesh.Cell(i)->Point(2)->Id()+1 << ";" << endl;
+		}
+	file2 << "];" << endl;
+	file2 << "figure;trimesh(triangles, nodes(:,1), nodes(:,2));" << endl;
+	file2.close();
 
 	/// REFINE MESH
-	const int prob = 30;
 	TriangleRefiner refiner;
 	refiner.SetMesh(mesh);
 
-	/// OUTPUT MESH TO MATLAB SCRIPT FOR VISUALIZATION
-	ofstream filePrev("plotTriangleMeshPrev.m", ofstream::out);
-	filePrev << "nodes = [";
-	for(unsigned int i = 0; i < mesh.NumberOfPoints(); i++)
-		filePrev << mesh.Point(i)->Coordinates()(0) << "," <<  mesh.Point(i)->Coordinates()(1) << ";" << endl;
-	filePrev << "];" << endl;
-
-	filePrev << "triangles = [";
-	for(unsigned int i = 0; i < mesh.NumberOfCells(); i++)
-		{
-			filePrev << mesh.Cell(i)->Point(0)->Id()+1 << "," <<  mesh.Cell(i)->Point(1)->Id()+1 << "," << mesh.Cell(i)->Point(2)->Id()+1 << ";" << endl;
-		}
-	filePrev << "];" << endl;
-	filePrev << "trimesh(triangles, nodes(:,1), nodes(:,2));" << endl;
-	filePrev.close();
-
-	srand(1);
 	for(int i=0; i < mesh.NumberOfCells(); i++)
-		if (rand() % 100 < prob)
-			refiner.AddCellToRefine(i);
+		if (rand() % 100 < 30)
+			refiner.PrepareForRefineCell(i);
 	refiner.RefineMesh();
 
-	cout << "Ha funzionato" << endl;
-
 	/// OUTPUT MESH TO MATLAB SCRIPT FOR VISUALIZATION
-	ofstream file("plotTriangleMesh.m", ofstream::out);
+	ofstream file("plotTriangleMeshOutput.m", ofstream::out);
 	file << "nodes = [";
 	for(unsigned int i = 0; i < mesh.NumberOfPoints(); i++)
 		file << mesh.Point(i)->Coordinates()(0) << "," <<  mesh.Point(i)->Coordinates()(1) << ";" << endl;
@@ -76,7 +72,7 @@ int main(int argc, char** argv)
 			file << mesh.Cell(i)->Point(0)->Id()+1 << "," <<  mesh.Cell(i)->Point(1)->Id()+1 << "," << mesh.Cell(i)->Point(2)->Id()+1 << ";" << endl;
 		}
 	file << "];" << endl;
-	file << "trimesh(triangles, nodes(:,1), nodes(:,2));" << endl;
+	file << "figure;trimesh(triangles, nodes(:,1), nodes(:,2));" << endl;
 	file.close();
 
 }
