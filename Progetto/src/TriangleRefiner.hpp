@@ -16,6 +16,7 @@ namespace GeDiM
 		GenericMesh* meshPointer;
 		vector<bool> idCellsToRefine;
 		vector<bool> idEdgesToCut;
+		list<unsigned> codaCelle;
 
 		bool HasMarkedEdges(const GenericCell* C)
 		{
@@ -77,12 +78,16 @@ namespace GeDiM
 			C->AddEdge(E2);
 		}
 
+		unsigned NumeroLatiMarcatiViciniLatoLungo(GenericCell* C);
 		void RotateCell(GenericCell* C);
 		void PensaciTuAlLatoIgnoto(GenericCell* C, GenericEdge* E); // Deve anche far puntare al lato ingoto la cella
 		void RefinePairedTriangles(GenericCell* C0, GenericCell* C1);
 		void RefineBorderTriangle(GenericCell* C0);
+		void Refine4Edges(GenericCell* C);
 		static double Distance(const GenericPoint* P1, const GenericPoint* P2) {return (P1->Coordinates()-P2->Coordinates()).norm();}
 		const GenericEdge* LongestEdge(const GenericCell* C);
+		void pippo();
+		unsigned PrimoDaTagliare(unsigned start);
 
 	public:
 		TriangleRefiner() {meshPointer = NULL;}
@@ -95,7 +100,7 @@ namespace GeDiM
 			idCellsToRefine.assign(meshPointer->NumberOfCells(), false);
 		}
 		void PrepareForRefineCell(const unsigned int& value);
-		
+
 		Output::ExitCodes RefineMesh();
 	};
 }

@@ -32,35 +32,36 @@ int main(int argc, char** argv)
 	GenericMesh mesh;
 	meshCreator.CreateMesh(domain, mesh);
 	Output::PrintGenericMessage("Triangle ha prodotto una mesh contenente %d triangoli, %d nodi e %d lati", true, mesh.NumberOfCells(), mesh.NumberOfPoints(), mesh.NumberOfEdges());
-	
+
 
 	/// INPUT MESH TO MATLAB SCRIPT FOR VISUALIZATION
-	ofstream file2("plotTriangleMeshInput.m", ofstream::out);
-	file2 << "nodes = [";
+	ofstream file("plotTriangleMesh.m", ofstream::out);
+	file << "nodes = [";
 	for(unsigned int i = 0; i < mesh.NumberOfPoints(); i++)
-		file2 << mesh.Point(i)->Coordinates()(0) << "," <<  mesh.Point(i)->Coordinates()(1) << ";" << endl;
-	file2 << "];" << endl;
+		file << mesh.Point(i)->Coordinates()(0) << "," <<  mesh.Point(i)->Coordinates()(1) << ";" << endl;
+	file << "];" << endl;
 
-	file2 << "triangles = [";
+	file << "triangles = [";
 	for(unsigned int i = 0; i < mesh.NumberOfCells(); i++)
 		{
-			file2 << mesh.Cell(i)->Point(0)->Id()+1 << "," <<  mesh.Cell(i)->Point(1)->Id()+1 << "," << mesh.Cell(i)->Point(2)->Id()+1 << ";" << endl;
+			file << mesh.Cell(i)->Point(0)->Id()+1 << "," <<  mesh.Cell(i)->Point(1)->Id()+1 << "," << mesh.Cell(i)->Point(2)->Id()+1 << ";" << endl;
 		}
-	file2 << "];" << endl;
-	file2 << "figure;trimesh(triangles, nodes(:,1), nodes(:,2));" << endl;
-	file2.close();
+	file << "];" << endl;
+	file << "figure;trimesh(triangles, nodes(:,1), nodes(:,2));" << endl;
 
 	/// REFINE MESH
 	TriangleRefiner refiner;
 	refiner.SetMesh(mesh);
 
-	for(int i=0; i < mesh.NumberOfCells(); i++)
-		if (rand() % 100 < 30)
-			refiner.PrepareForRefineCell(i);
+    //int targetcellid = atoi(argv[1]);
+    //refiner.PrepareForRefineCell(targetcellid);
+	srand(0);
+    for(int i = 0; i < mesh.NumberOfCells(); i++)
+        if(rand()%100 < 30)
+            refiner.PrepareForRefineCell(i);
 	refiner.RefineMesh();
 
 	/// OUTPUT MESH TO MATLAB SCRIPT FOR VISUALIZATION
-	ofstream file("plotTriangleMeshOutput.m", ofstream::out);
 	file << "nodes = [";
 	for(unsigned int i = 0; i < mesh.NumberOfPoints(); i++)
 		file << mesh.Point(i)->Coordinates()(0) << "," <<  mesh.Point(i)->Coordinates()(1) << ";" << endl;
