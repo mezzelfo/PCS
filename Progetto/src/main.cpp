@@ -57,7 +57,7 @@ int main(int argc, char** argv)
     //refiner.PrepareForRefineCell(targetcellid);
 	srand(0);
     for(int i = 0; i < mesh.NumberOfCells(); i++)
-		if(rand()%100 < 5)
+		if(rand()%100 < 90)
 			refiner.PrepareForRefineCell(i);
 	refiner.RefineMesh();
 

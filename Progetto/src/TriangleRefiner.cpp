@@ -12,17 +12,28 @@ namespace GeDiM
        return 9999999;
     }
 
-   unsigned TriangleRefiner::NumeroLatiMarcatiViciniLatoLungo(GenericCell* C){
-            unsigned t=0;
-            for(int i=0; i<3; i++){
-            if(idEdgesToCut.at(C->Edge(i)->Id())
-               //DEVONO COINCIDERE CON UNO DEI LATI VICINI
-             /*  and(C->Edge(i)->Id()==LongestEdge(C->Cell(0))->Id() or
-                C->Edge(i)->Id()==LongestEdge(C->Cell(1))->Id() or
-                C->Edge(i)->Id()==LongestEdge(C->Cell(2))->Id())*/) t++;}
-
-        return t;
+   	bool TriangleRefiner::DaDividereinQuattro(const GenericCell* C)
+	{
+		return false;
+		if (idEdgesToCut.at(C->Edge(0)->Id()) and idEdgesToCut.at(C->Edge(1)->Id()) and idEdgesToCut.at(C->Edge(2)->Id()))
+		{
+			for(int i = 0; i < 3; i++)
+			{
+				if (C->Edge(i)->HasRightCell() and (C->Edge(i)->RightCell() != C))
+				{
+					if (LongestEdge(C->Edge(i)->RightCell()) != C->Edge(i))
+						return false;
+				}
+				if (C->Edge(i)->HasLeftCell() and (C->Edge(i)->LeftCell() != C))
+				{
+					if (LongestEdge(C->Edge(i)->LeftCell()) != C->Edge(i))
+						return false;
+				}
+			}
+			return true;
 		}
+		return false;
+	}
 
 	Output::ExitCodes TriangleRefiner::RefineMesh()
 	{
@@ -32,45 +43,46 @@ namespace GeDiM
             unsigned edgeId = PrimoDaTagliare(vecchio);
             GenericEdge* L = meshPointer->Edge(edgeId);
 
-          	if(L->HasRightCell())
-            {
-                GenericCell* C = meshPointer->Cell(L->RightCell()->Id());
-                if(NumeroLatiMarcatiViciniLatoLungo(C) == 3)
-                {
-                	//Refine4Edges(C);
-                }
-            }
-
-            if(L->HasLeftCell() and L->IsActive())
-            {
-                GenericCell* C = meshPointer->Cell(L->LeftCell()->Id());
-                if(NumeroLatiMarcatiViciniLatoLungo(C) == 3)
-                {
-                	//Refine4Edges(C);
-                }
-            }
-
-            if (not IsOnBorder(L) and L->IsActive()) // Se il lato è confinante con due triangoli
+          	if (not IsOnBorder(L)) // Se il lato è confinante con due triangoli
             {
                 GenericCell* C0 = meshPointer->Cell(L->Cell(0)->Id());
                 GenericCell* C1 = meshPointer->Cell(L->Cell(1)->Id());
-                if (LongestEdge(C0) == LongestEdge(C1))
+				if (DaDividereinQuattro(C0))
+				{
+					cerr << "Eccomi1\n" << endl;
+					Refine4Edges(C0);
+					idEdgesToCut.at(edgeId) = false;
+				}
+				else if (DaDividereinQuattro(C1))
+				{
+					cerr << "Eccomi2\n" << endl;
+					Refine4Edges(C1);
+					idEdgesToCut.at(edgeId) = false;
+				}
+                else if (LongestEdge(C0) == LongestEdge(C1))
                 {
                     RefinePairedTriangles(C0,C1);
                     idEdgesToCut.at(edgeId) = false;
-                    idCellsToRefine.at(C0->Id()) = false;
-                    idCellsToRefine.at(C1->Id()) = false;
                 }
 
             }
-            else if(L->IsActive())// Se il lato è di bordo
+            else // Se il lato è di bordo
             {
                 GenericCell* C0;
                 if (L->Cell(0) == NULL) C0 = meshPointer->Cell(L->Cell(1)->Id());
                 if (L->Cell(1) == NULL) C0 = meshPointer->Cell(L->Cell(0)->Id());
-                RefineBorderTriangle(C0);
-                idEdgesToCut.at(edgeId) = false;
-                idCellsToRefine.at(C0->Id()) = false;
+				if (DaDividereinQuattro(C0))
+				{
+					cerr << "Eccomi3" << endl;
+					Refine4Edges(C0);
+					idEdgesToCut.at(edgeId) = false;
+				}
+				else
+				{
+					RefineBorderTriangle(C0);
+					idEdgesToCut.at(edgeId) = false;
+				}
+                
             }
 			
             if(L->IsActive())
@@ -124,7 +136,6 @@ namespace GeDiM
 	void TriangleRefiner::PrepareForRefineCell(const unsigned int& value)
 	{
 		GenericCell* C = meshPointer->Cell(value);
-		idCellsToRefine.at(value) = true;
 		const GenericEdge* L = LongestEdge(C);
 		idEdgesToCut.at(L->Id()) = true;
 		RotateCell(C);	// Forse si può togliere
@@ -257,12 +268,15 @@ namespace GeDiM
 		//C0_0->InitializeCells(2);
 		C0_0->AddCell(C0_1);
 		PensaciTuAlLatoIgnoto(C0_0, meshPointer->Edge(C0->Edge(2)->Id()));
+		C0_0->AddCell(NULL);
 
 		SetCellPoints(C0_1,midpoint,C0->Point(1),C0->Point(2));
 		SetCellEdges(C0_1,median0,subEdge1,C0->Edge(1));
 		//C0_1->InitializeCells(2);
 		PensaciTuAlLatoIgnoto(C0_1, meshPointer->Edge(C0->Edge(1)->Id()));
 		C0_1->AddCell(C0_0);
+		C0_1->AddCell(NULL);
+
 
 		C0->SetState(false);
 		longest->SetState(false);

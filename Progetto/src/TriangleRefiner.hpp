@@ -14,7 +14,6 @@ namespace GeDiM
 	{
 	protected:
 		GenericMesh* meshPointer;
-		vector<bool> idCellsToRefine;
 		vector<bool> idEdgesToCut;
 
 		bool HasMarkedEdges(const GenericCell* C)
@@ -42,7 +41,6 @@ namespace GeDiM
 		{
 			GenericCell* C = meshPointer->CreateCell();
 			meshPointer->AddCell(C);
-			idCellsToRefine.push_back(false);
 			return C;
 		}
 		void SetEdgeGeometry(GenericEdge* E, const GenericPoint* P0, const GenericPoint* P1, const GenericCell* right, const GenericCell* left)
@@ -77,7 +75,7 @@ namespace GeDiM
 			C->AddEdge(E2);
 		}
 
-		unsigned NumeroLatiMarcatiViciniLatoLungo(GenericCell* C);
+		bool DaDividereinQuattro(const GenericCell* C);
 		void RotateCell(GenericCell* C);
 		void PensaciTuAlLatoIgnoto(GenericCell* C, GenericEdge* E); // Deve anche far puntare al lato ingoto la cella
 		void RefinePairedTriangles(GenericCell* C0, GenericCell* C1);
@@ -96,7 +94,6 @@ namespace GeDiM
 		{
 			meshPointer = &mesh;
 			idEdgesToCut.assign(meshPointer->NumberOfEdges(), false);
-			idCellsToRefine.assign(meshPointer->NumberOfCells(), false);
 		}
 		void PrepareForRefineCell(const unsigned int& value);
 
