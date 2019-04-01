@@ -16,7 +16,6 @@ namespace GeDiM
 		GenericMesh* meshPointer;
 		vector<bool> idCellsToRefine;
 		vector<bool> idEdgesToCut;
-		list<unsigned> codaCelle;
 
 		bool HasMarkedEdges(const GenericCell* C)
 		{
@@ -86,7 +85,7 @@ namespace GeDiM
 		void Refine4Edges(GenericCell* C);
 		static double Distance(const GenericPoint* P1, const GenericPoint* P2) {return (P1->Coordinates()-P2->Coordinates()).norm();}
 		const GenericEdge* LongestEdge(const GenericCell* C);
-		void pippo();
+		
 		unsigned PrimoDaTagliare(unsigned start);
 
 	public:

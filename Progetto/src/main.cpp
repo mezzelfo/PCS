@@ -57,8 +57,8 @@ int main(int argc, char** argv)
     //refiner.PrepareForRefineCell(targetcellid);
 	srand(0);
     for(int i = 0; i < mesh.NumberOfCells(); i++)
-        if(rand()%100 < 30)
-            refiner.PrepareForRefineCell(i);
+		if(rand()%100 < 5)
+			refiner.PrepareForRefineCell(i);
 	refiner.RefineMesh();
 
 	/// OUTPUT MESH TO MATLAB SCRIPT FOR VISUALIZATION

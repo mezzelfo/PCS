@@ -26,19 +26,18 @@ namespace GeDiM
 
 	Output::ExitCodes TriangleRefiner::RefineMesh()
 	{
-	    pippo();
 	    unsigned vecchio = 0;
 	    while(PrimoDaTagliare(0) != 9999999)
         {
             unsigned edgeId = PrimoDaTagliare(vecchio);
             GenericEdge* L = meshPointer->Edge(edgeId);
 
-          	/*if(L->HasRightCell())
+          	if(L->HasRightCell())
             {
                 GenericCell* C = meshPointer->Cell(L->RightCell()->Id());
                 if(NumeroLatiMarcatiViciniLatoLungo(C) == 3)
                 {
-                 //   Refine4Edges(C);
+                	//Refine4Edges(C);
                 }
             }
 
@@ -47,9 +46,9 @@ namespace GeDiM
                 GenericCell* C = meshPointer->Cell(L->LeftCell()->Id());
                 if(NumeroLatiMarcatiViciniLatoLungo(C) == 3)
                 {
-                 //   Refine4Edges(C);
+                	//Refine4Edges(C);
                 }
-            }*/
+            }
 
             if (not IsOnBorder(L) and L->IsActive()) // Se il lato è confinante con due triangoli
             {
@@ -75,7 +74,11 @@ namespace GeDiM
             }
 			
             if(L->IsActive())
-                vecchio++;
+			{
+				vecchio = (vecchio+1)%meshPointer->NumberOfEdges();
+				if (L->HasRightCell()) PrepareForRefineCell(L->RightCell()->Id());
+				if (L->HasLeftCell()) PrepareForRefineCell(L->LeftCell()->Id());
+			}
             else
                 vecchio = 0;
 		}
@@ -125,10 +128,6 @@ namespace GeDiM
 		const GenericEdge* L = LongestEdge(C);
 		idEdgesToCut.at(L->Id()) = true;
 		RotateCell(C);	// Forse si può togliere
-		if(L->HasRightCell())
-            codaCelle.push_back(L->RightCell()->Id());
-        if(L->HasLeftCell())
-            codaCelle.push_back(L->LeftCell()->Id());
 	}
 	void TriangleRefiner::PensaciTuAlLatoIgnoto(GenericCell* C, GenericEdge* E) // Deve anche far puntare al lato ingoto la cella
 	{
@@ -224,7 +223,6 @@ namespace GeDiM
 			PrepareForRefineCell(C1_0->Id());
 		if (HasMarkedEdges(C1_1))
 			PrepareForRefineCell(C1_1->Id());
-        pippo();
 
 	}
 	void TriangleRefiner::RefineBorderTriangle(GenericCell* C0)
@@ -273,7 +271,6 @@ namespace GeDiM
 			PrepareForRefineCell(C0_0->Id());
 		if (HasMarkedEdges(C0_1))
 			PrepareForRefineCell(C0_1->Id());
-        pippo();
 	}
 	void TriangleRefiner::Refine4Edges(GenericCell* C){
 
@@ -289,23 +286,27 @@ namespace GeDiM
 
         GenericCell* CL0=meshPointer->Cell(L0->RightCell()->Id());
         if(CL0==C) CL0= meshPointer->Cell(L0->LeftCell()->Id());
-        GenericCell* CL1=meshPointer->Cell (L1->RightCell()->Id());
+        	GenericCell* CL1=meshPointer->Cell (L1->RightCell()->Id());
         if(CL1==C) CL1= meshPointer->Cell (L1->LeftCell()->Id());
-           GenericCell* CL2= meshPointer->Cell(L2->RightCell()->Id());
+        	GenericCell* CL2= meshPointer->Cell(L2->RightCell()->Id());
         if(CL2==C) CL2= meshPointer->Cell(L2->LeftCell()->Id());
 
         GenericCell* CL0_0;
         GenericCell* CL0_1;
         GenericEdge* median0;
 
-        if(CL0==NULL){
+        if(CL0==NULL)
+		{
             CL0_0=NULL;
             CL0_1=NULL;
             median0=NULL;
         }
-        else{ CL0_0= NewCell();
-              CL0_1= NewCell();
-              median0= NewEdge();}
+        else
+		{
+			CL0_0= NewCell();
+            CL0_1= NewCell();
+            median0= NewEdge();
+		}
 
         GenericCell* CL1_0= NewCell();
         GenericCell* CL1_1= NewCell();
@@ -356,17 +357,17 @@ namespace GeDiM
         //Inizializzo le celle
 
         if(CL0!=NULL){
-        SetCellPoints(CL0_0, CL0->Point(0),CL0->Point(2),Pm0);
-		SetCellEdges(CL0_0,CL0->Edge(2),median0, E0);
+			SetCellPoints(CL0_0, CL0->Point(0),CL0->Point(2),Pm0);
+			SetCellEdges(CL0_0,CL0->Edge(2),median0, E0);
 
-        SetCellPoints(CL0_1, CL0->Point(1),Pm1,CL0->Point(2));
-		SetCellEdges(CL0_1,E1,median1,CL0->Edge(1));
+			SetCellPoints(CL0_1, CL0->Point(1),Pm1,CL0->Point(2));
+			SetCellEdges(CL0_1,E1,median1,CL0->Edge(1));
 
-		CL0_0->AddCell(CL0_1);
-		CL0_1->AddCell(CL0_0);
+			CL0_0->AddCell(CL0_1);
+			CL0_1->AddCell(CL0_0);
 
-		PensaciTuAlLatoIgnoto(CL0_0, meshPointer->Edge(CL0->Edge(2)->Id()));
-		PensaciTuAlLatoIgnoto(CL0_1, meshPointer->Edge(CL0->Edge(1)->Id()));
+			PensaciTuAlLatoIgnoto(CL0_0, meshPointer->Edge(CL0->Edge(2)->Id()));
+			PensaciTuAlLatoIgnoto(CL0_1, meshPointer->Edge(CL0->Edge(1)->Id()));
 		}
 
         SetCellPoints(CL1_0, CL1->Point(0),CL1->Point(2),Pm1);
@@ -414,19 +415,5 @@ namespace GeDiM
 
 
     }
-
-    void TriangleRefiner::pippo(){
-
-    while(not codaCelle.empty())
-    {
-        unsigned t = codaCelle.front();
-        if (not idCellsToRefine.at(t))
-        {
-            PrepareForRefineCell(t);
-        }
-        codaCelle.pop_front();
-    }
-   }
-
 }
 
