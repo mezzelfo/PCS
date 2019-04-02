@@ -56,7 +56,7 @@ int main(int argc, char** argv)
     //int targetcellid = atoi(argv[1]);
     //refiner.PrepareForRefineCell(targetcellid);
 	srand(0);
-    for(int i = 0; i < mesh.NumberOfCells(); i++)
+    for(unsigned i = 0; i < mesh.NumberOfCells(); i++)
 		if(rand()%100 < 90)
 			refiner.PrepareForRefineCell(i);
 	refiner.RefineMesh();

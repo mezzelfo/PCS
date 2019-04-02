@@ -14,6 +14,10 @@ namespace GeDiM
 
    	bool TriangleRefiner::DaDividereinQuattro(const GenericCell* C)
 	{
+	    if(IsOnBorder(C->Edge(0)) or IsOnBorder(C->Edge(1)) or IsOnBorder(C->Edge(2)))
+            return false;
+
+
 		if (idEdgesToCut.at(C->Edge(0)->Id()) and idEdgesToCut.at(C->Edge(1)->Id()) and idEdgesToCut.at(C->Edge(2)->Id()))
 		{
 			for(int i = 0; i < 3; i++)
@@ -87,9 +91,8 @@ namespace GeDiM
 					RefineBorderTriangle(C0);
 					idEdgesToCut.at(edgeId) = false;
 				}
-                
             }
-			
+
             if(L->IsActive())
 			{
 				vecchio = (vecchio+1)%meshPointer->NumberOfEdges();
@@ -376,50 +379,68 @@ namespace GeDiM
 			SetCellPoints(CL0_0, Pm0, P0, CL0->Point(2));
 			SetCellEdges(CL0_0,E0,CL0->Edge(1),median0);
 			// TODO: Verso antiorario? Manca comunque una cella
+			CL0_0->AddCell(C0);
+			PensaciTuAlLatoIgnoto(CL0_0, meshPointer->Edge(CL0->Edge(1)->Id()));
 			CL0_0->AddCell(CL0_1);
-			PensaciTuAlLatoIgnoto(CL0_0, meshPointer->Edge(CL0->Edge(2)->Id()));
 
-			SetCellPoints(CL0_1, CL0->Point(1),Pm1,CL0->Point(2));
-			SetCellEdges(CL0_1,E1,median1,CL0->Edge(1));
-			// TODO: Verso antiorario? Manca comunque una cella	
+
+			SetCellPoints(CL0_1, P1,Pm0,CL0->Point(2));
+			SetCellEdges(CL0_1,E1,median0,CL0->Edge(2));
+			// TODO: Verso antiorario? Manca comunque una cella
+			CL0_1->AddCell(C1);
 			CL0_1->AddCell(CL0_0);
-			PensaciTuAlLatoIgnoto(CL0_1, meshPointer->Edge(CL0->Edge(1)->Id()));
+			PensaciTuAlLatoIgnoto(CL0_1, meshPointer->Edge(CL0->Edge(2)->Id()));
 		}
 
-        SetCellPoints(CL1_0, CL1->Point(0),CL1->Point(2),Pm1);
-		SetCellEdges(CL1_0,CL1->Edge(2),median1, E2);
+        SetCellPoints(CL1_0, P1,CL1->Point(2),Pm1);
+		SetCellEdges(CL1_0,E2,CL1->Edge(1),median1);
+		CL1_1->AddCell(C1);
+		PensaciTuAlLatoIgnoto(CL1_0, meshPointer->Edge(CL1->Edge(1)->Id()));
 		CL1_0->AddCell(CL1_1);
-		PensaciTuAlLatoIgnoto(CL1_0, meshPointer->Edge(CL1->Edge(2)->Id()));
-		
 
-        SetCellPoints(CL1_1, CL1->Point(1),Pm1,CL1->Point(2));
-		SetCellEdges(CL1_1,E3,median1,CL1->Edge(1));
+        SetCellPoints(CL1_1,Pm1,CL1->Point(2), P2);
+		SetCellEdges(CL1_1,E3,median1,CL1->Edge(2));
+		CL1_1->AddCell(C2);
 		CL1_1->AddCell(CL1_0);
-		PensaciTuAlLatoIgnoto(CL1_1, meshPointer->Edge(CL1->Edge(1)->Id()));
+		PensaciTuAlLatoIgnoto(CL1_1, meshPointer->Edge(CL1->Edge(2)->Id()));
 
 
-        SetCellPoints(CL2_0, CL2->Point(0),CL2->Point(2),Pm2);
-		SetCellEdges(CL2_0,CL2->Edge(2),median2, E4);
+        SetCellPoints(CL2_0, P2,CL2->Point(2),Pm2);
+		SetCellEdges(CL2_0, E4,CL2->Edge(1),median2);
+		CL2_0->AddCell(C2);
+		PensaciTuAlLatoIgnoto(CL2_0, meshPointer->Edge(CL2->Edge(1)->Id()));
 		CL2_0->AddCell(CL2_1);
-		PensaciTuAlLatoIgnoto(CL2_0, meshPointer->Edge(CL2->Edge(2)->Id()));
 
-        SetCellPoints(CL2_1, CL2->Point(1),Pm2,CL2->Point(2));
-		SetCellEdges(CL2_1,E5,median2,CL0->Edge(1));
+        SetCellPoints(CL2_1,Pm2,CL2->Point(2), P0);
+		SetCellEdges(CL2_1,E5,median2,CL0->Edge(2));
+		CL2_1->AddCell(C0);
 		CL2_1->AddCell(CL2_0);
-		PensaciTuAlLatoIgnoto(CL2_1, meshPointer->Edge(CL2->Edge(1)->Id()));
+		PensaciTuAlLatoIgnoto(CL2_1, meshPointer->Edge(CL2->Edge(2)->Id()));
 
 		// E le celle confinanti?
         SetCellPoints(C0,P0,Pm0,Pm2);
 		SetCellEdges(C0,E0,E6,E5);
+		C0->AddCell(CL0_0);
+		C0->AddCell(C3);
+		C0->AddCell(CL2_1);
 
 		SetCellPoints(C1,Pm0,P1,Pm1);
 		SetCellEdges(C1,E1,E2,E7);
+		C1->AddCell(CL0_1);
+		C1->AddCell(CL1_0);
+		C1->AddCell(C3);
 
 		SetCellPoints(C2,Pm1,P2,Pm2);
 		SetCellEdges(C2,E3,E4,E8);
+		C2->AddCell(CL1_1);
+		C2->AddCell(CL2_0);
+		C2->AddCell(C3);
 
 		SetCellPoints(C3,Pm2,Pm0,Pm1);
 		SetCellEdges(C3,E6,E7,E8);
+		C3->AddCell(C0);
+		C3->AddCell(C1);
+		C3->AddCell(C2);
 
         C->SetState(false);
         if (CL0 != NULL) CL0->SetState(false);
@@ -428,7 +449,6 @@ namespace GeDiM
 		L0->SetState(false);
 		L1->SetState(false);
 		L2->SetState(false);
-
 
     }
 }
