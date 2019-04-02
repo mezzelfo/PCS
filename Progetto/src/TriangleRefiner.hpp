@@ -74,6 +74,12 @@ namespace GeDiM
 			C->AddEdge(E1);
 			C->AddEdge(E2);
 		}
+		const GenericCell* ScegliAltra(const GenericEdge* E, const GenericCell* me)
+		{
+			if (E->RightCell() == me)
+				return E->LeftCell();
+			return E->RightCell();
+		}
 
 		bool DaDividereinQuattro(const GenericCell* C);
 		void RotateCell(GenericCell* C);
