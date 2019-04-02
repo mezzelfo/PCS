@@ -7,7 +7,7 @@
 using namespace GeDiM;
 using namespace Eigen;
 
-int main(int argc, char** argv)
+int main()
 {
 	/// CREATE DOMAIN
 	const unsigned int numDomainVertices = 4;
@@ -53,11 +53,9 @@ int main(int argc, char** argv)
 	TriangleRefiner refiner;
 	refiner.SetMesh(mesh);
 
-    //int targetcellid = atoi(argv[1]);
-    //refiner.PrepareForRefineCell(targetcellid);
-	srand(0);
+    srand(1);
     for(unsigned i = 0; i < mesh.NumberOfCells(); i++)
-		if(rand()%100 < 90)
+		if(rand()%100 < 120)
 			refiner.PrepareForRefineCell(i);
 	refiner.RefineMesh();
 

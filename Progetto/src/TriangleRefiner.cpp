@@ -14,20 +14,19 @@ namespace GeDiM
 
    	bool TriangleRefiner::DaDividereinQuattro(const GenericCell* C)
 	{
-	    if(IsOnBorder(C->Edge(0)) or IsOnBorder(C->Edge(1)) or IsOnBorder(C->Edge(2)))
-            return false;
+	    //if(IsOnBorder(C->Edge(0)) or IsOnBorder(C->Edge(1)) or IsOnBorder(C->Edge(2))) return false;
 
 
 		if (idEdgesToCut.at(C->Edge(0)->Id()) and idEdgesToCut.at(C->Edge(1)->Id()) and idEdgesToCut.at(C->Edge(2)->Id()))
 		{
 			for(int i = 0; i < 3; i++)
 			{
-				if (C->Edge(i)->HasRightCell() and (C->Edge(i)->RightCell() != C))
+				if ((C->Edge(i)->HasRightCell()) and (C->Edge(i)->RightCell() != C))
 				{
 					if (LongestEdge(C->Edge(i)->RightCell()) != C->Edge(i))
 						return false;
 				}
-				if (C->Edge(i)->HasLeftCell() and (C->Edge(i)->LeftCell() != C))
+				if ((C->Edge(i)->HasLeftCell()) and (C->Edge(i)->LeftCell() != C))
 				{
 					if (LongestEdge(C->Edge(i)->LeftCell()) != C->Edge(i))
 						return false;
@@ -306,8 +305,10 @@ namespace GeDiM
         GenericEdge* L1 = meshPointer->Edge(C->Edge(1)->Id());
         GenericEdge* L2 =  meshPointer->Edge(C->Edge(2)->Id());
 
-
-        GenericCell* CL0 = meshPointer->Cell(ScegliAltra(L0,C)->Id());
+		GenericCell* CL0 = NULL;
+		if (ScegliAltra(L0,C) != NULL)
+			CL0 = meshPointer->Cell(ScegliAltra(L0,C)->Id());
+		
         GenericCell* CL1 = meshPointer->Cell(ScegliAltra(L1,C)->Id());
         GenericCell* CL2 = meshPointer->Cell(ScegliAltra(L2,C)->Id());
 
@@ -343,6 +344,7 @@ namespace GeDiM
         SetFamily(L0, E0, E1);
         SetFamily(L1, E2, E3);
         SetFamily(L2, E4, E5);
+		
 
         // Inizializzo i punti medi
 
@@ -371,7 +373,7 @@ namespace GeDiM
         SetEdgeGeometry(E7, Pm0, Pm1, C1, C3);
         SetEdgeGeometry(E8, Pm1, Pm2, C2, C3);
 
-
+		
         //Inizializzo le celle
 
         if(CL0 != NULL)
@@ -392,18 +394,21 @@ namespace GeDiM
 			PensaciTuAlLatoIgnoto(CL0_1, meshPointer->Edge(CL0->Edge(2)->Id()));
 		}
 
+		
+
         SetCellPoints(CL1_0, P1,CL1->Point(2),Pm1);
 		SetCellEdges(CL1_0,E2,CL1->Edge(1),median1);
 		CL1_1->AddCell(C1);
 		PensaciTuAlLatoIgnoto(CL1_0, meshPointer->Edge(CL1->Edge(1)->Id()));
 		CL1_0->AddCell(CL1_1);
 
+		
+
         SetCellPoints(CL1_1,Pm1,CL1->Point(2), P2);
 		SetCellEdges(CL1_1,E3,median1,CL1->Edge(2));
 		CL1_1->AddCell(C2);
 		CL1_1->AddCell(CL1_0);
 		PensaciTuAlLatoIgnoto(CL1_1, meshPointer->Edge(CL1->Edge(2)->Id()));
-
 
         SetCellPoints(CL2_0, P2,CL2->Point(2),Pm2);
 		SetCellEdges(CL2_0, E4,CL2->Edge(1),median2);
@@ -412,7 +417,11 @@ namespace GeDiM
 		CL2_0->AddCell(CL2_1);
 
         SetCellPoints(CL2_1,Pm2,CL2->Point(2), P0);
-		SetCellEdges(CL2_1,E5,median2,CL0->Edge(2));
+		if (CL0 == NULL)
+			SetCellEdges(CL2_1,E5,median2,NULL);
+		else
+			SetCellEdges(CL2_1,E5,median2,CL0->Edge(2));
+
 		CL2_1->AddCell(C0);
 		CL2_1->AddCell(CL2_0);
 		PensaciTuAlLatoIgnoto(CL2_1, meshPointer->Edge(CL2->Edge(2)->Id()));
@@ -424,6 +433,7 @@ namespace GeDiM
 		C0->AddCell(C3);
 		C0->AddCell(CL2_1);
 
+		
 		SetCellPoints(C1,Pm0,P1,Pm1);
 		SetCellEdges(C1,E1,E2,E7);
 		C1->AddCell(CL0_1);
