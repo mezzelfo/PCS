@@ -26,7 +26,7 @@ int main()
 
 	/// MESH DOMAIN
 	MeshImport_Triangle meshCreator;
-	meshCreator.SetMaximumCellSize(1e-3);
+	meshCreator.SetMaximumCellSize(1e-2);
 	meshCreator.CreateTriangleInput(domain);
 	meshCreator.CreateTriangleOutput(domain);
 	GenericMesh mesh;
@@ -36,42 +36,51 @@ int main()
 
 	/// INPUT MESH TO MATLAB SCRIPT FOR VISUALIZATION
 	ofstream file("plotTriangleMesh.m", ofstream::out);
-	file << "nodes = [";
+	file << "nodesBefore = [";
 	for(unsigned int i = 0; i < mesh.NumberOfPoints(); i++)
 		file << mesh.Point(i)->Coordinates()(0) << "," <<  mesh.Point(i)->Coordinates()(1) << ";" << endl;
 	file << "];" << endl;
 
-	file << "triangles = [";
+	file << "trianglesBefore = [";
 	for(unsigned int i = 0; i < mesh.NumberOfCells(); i++)
 		{
 			file << mesh.Cell(i)->Point(0)->Id()+1 << "," <<  mesh.Cell(i)->Point(1)->Id()+1 << "," << mesh.Cell(i)->Point(2)->Id()+1 << ";" << endl;
 		}
 	file << "];" << endl;
-	file << "figure;trimesh(triangles, nodes(:,1), nodes(:,2));" << endl;
+	file << "figure;trimesh(trianglesBefore, nodesBefore(:,1), nodesBefore(:,2));" << endl;
 
 	/// REFINE MESH
-	TriangleRefiner refiner;
-	refiner.SetMesh(mesh);
-
-    srand(1);
-    for(unsigned i = 0; i < mesh.NumberOfCells(); i++)
-		if(rand()%100 < 120)
+	TriangleRefiner refiner(mesh);
+	unsigned numerotriangolioriginali = mesh.NumberOfCells();
+	srand(1);
+	for(unsigned i = 0; i < mesh.NumberOfCells(); i++)
+		if(rand()%100 < 20)
 			refiner.PrepareForRefineCell(i);
+			
+		
 	refiner.RefineMesh();
 
 	/// OUTPUT MESH TO MATLAB SCRIPT FOR VISUALIZATION
-	file << "nodes = [";
+	file << "nodesAfter = [";
 	for(unsigned int i = 0; i < mesh.NumberOfPoints(); i++)
 		file << mesh.Point(i)->Coordinates()(0) << "," <<  mesh.Point(i)->Coordinates()(1) << ";" << endl;
 	file << "];" << endl;
 
-	file << "triangles = [";
+	file << "trianglesAfter = [";
 	for(unsigned int i = 0; i < mesh.NumberOfCells(); i++)
 		{
 			file << mesh.Cell(i)->Point(0)->Id()+1 << "," <<  mesh.Cell(i)->Point(1)->Id()+1 << "," << mesh.Cell(i)->Point(2)->Id()+1 << ";" << endl;
 		}
 	file << "];" << endl;
-	file << "figure;trimesh(triangles, nodes(:,1), nodes(:,2));" << endl;
+	file << "figure;trimesh(trianglesAfter, nodesAfter(:,1), nodesAfter(:,2));" << endl;
+
+	file << "trianglesDifference = [";
+	for(unsigned int i = numerotriangolioriginali; i < mesh.NumberOfCells(); i++)
+		{
+			file << mesh.Cell(i)->Point(0)->Id()+1 << "," <<  mesh.Cell(i)->Point(1)->Id()+1 << "," << mesh.Cell(i)->Point(2)->Id()+1 << ";" << endl;
+		}
+	file << "];" << endl;
+	file << "figure;trimesh(trianglesDifference, nodesAfter(:,1), nodesAfter(:,2));" << endl;
 	file.close();
 
 }

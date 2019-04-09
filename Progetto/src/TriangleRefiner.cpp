@@ -2,17 +2,10 @@
 
 namespace GeDiM
 {
-    bool TriangleRefiner::QualcunoDaTagliare()
-    {
-       for(unsigned edgeId = 0; edgeId < meshPointer->NumberOfEdges(); edgeId++)
-           if (idEdgesToCut.at(edgeId))
-                return true;
-       return false;
-    }
 	Output::ExitCodes TriangleRefiner::RefineMesh()
 	{
 	    unsigned edgeId = 0;
-	    while(QualcunoDaTagliare())
+	    while(QualcunoDaTagliare())		
         {
         	edgeId = (edgeId+1)%meshPointer->NumberOfEdges();
         	if (not idEdgesToCut.at(edgeId))
@@ -47,18 +40,6 @@ namespace GeDiM
 		}
 		return Output::Success;
 	}
-	const GenericEdge* TriangleRefiner::LongestEdge(const GenericCell* C)
-	{
-		double a = Distance(C->Edge(0)->Point(0),C->Edge(0)->Point(1));
-		double b = Distance(C->Edge(1)->Point(0),C->Edge(1)->Point(1));
-		double c = Distance(C->Edge(2)->Point(0),C->Edge(2)->Point(1));
-		if ((a >= b) and (a >= c))
-			return C->Edge(0);
-		else if ((b >= a) and (b >= c))
-			return C->Edge(1);
-		else
-			return C->Edge(2);
-	}
 	void TriangleRefiner::RotateCell(GenericCell* C)
 	{
 		GenericEdge* L = meshPointer->Edge(LongestEdge(C)->Id());
@@ -89,9 +70,9 @@ namespace GeDiM
 		GenericCell* C = meshPointer->Cell(value);
 		const GenericEdge* L = LongestEdge(C);
 		idEdgesToCut.at(L->Id()) = true;
-		RotateCell(C);	// Forse si può togliere
+		RotateCell(C);
 	}
-	void TriangleRefiner::PensaciTuAlLatoIgnoto(GenericCell* C, GenericEdge* E) // Deve anche far puntare al lato ingoto la cella
+	void TriangleRefiner::PensaciTuAlLatoIgnoto(GenericCell* C, GenericEdge* E)
 	{
 		if (E->Cell(0) == C->Father())
 		{
@@ -108,7 +89,6 @@ namespace GeDiM
 	{
 		RotateCell(C0);
 		RotateCell(C1);
-
 		// Get longest edge from any of the input cells
 		GenericEdge* longest = meshPointer->Edge(LongestEdge(C0)->Id());
 
@@ -188,9 +168,9 @@ namespace GeDiM
 	}
 	void TriangleRefiner::RefineBorderTriangle(GenericCell* C0)
 	{
+		RotateCell(C0);
 		// Get longest edge from any of the input cells
 		GenericEdge* longest = meshPointer->Edge(LongestEdge(C0)->Id());
-		RotateCell(C0);
 
 		// Create empty objects
 		GenericPoint* midpoint = NewPoint();
