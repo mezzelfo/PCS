@@ -86,11 +86,10 @@ namespace GeDiM
 		void PensaciTuAlLatoIgnoto(GenericCell* C, GenericEdge* E); // Deve anche far puntare al lato ingoto la cella
 		void RefinePairedTriangles(GenericCell* C0, GenericCell* C1);
 		void RefineBorderTriangle(GenericCell* C0);
-		void Refine4Edges(GenericCell* C);
 		static double Distance(const GenericPoint* P1, const GenericPoint* P2) {return (P1->Coordinates()-P2->Coordinates()).norm();}
 		const GenericEdge* LongestEdge(const GenericCell* C);
 		
-		unsigned PrimoDaTagliare(unsigned start);
+		bool QualcunoDaTagliare();
 
 	public:
 		TriangleRefiner() {meshPointer = NULL;}

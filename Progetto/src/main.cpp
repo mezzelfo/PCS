@@ -26,7 +26,7 @@ int main()
 
 	/// MESH DOMAIN
 	MeshImport_Triangle meshCreator;
-	meshCreator.SetMaximumCellSize(1e-2);
+	meshCreator.SetMaximumCellSize(1e-3);
 	meshCreator.CreateTriangleInput(domain);
 	meshCreator.CreateTriangleOutput(domain);
 	GenericMesh mesh;
