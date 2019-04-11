@@ -7,8 +7,24 @@
 using namespace GeDiM;
 using namespace Eigen;
 
-int main()
+int main(int argc, char* argv[])
 {
+	/// PARAMETRI
+	double cellsize;
+	int percentuale;
+
+	if (argc != 3)
+	{
+		cerr << "Uso corretto: progetto.bin <cellsize> <percentuale>\n";
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		cellsize = stod(argv[1]);
+		percentuale = stoi(argv[2]);
+	}
+
+
 	/// CREATE DOMAIN
 	const unsigned int numDomainVertices = 4;
 	GenericDomain2D domain(0,numDomainVertices);
@@ -26,7 +42,7 @@ int main()
 
 	/// MESH DOMAIN
 	MeshImport_Triangle meshCreator;
-	meshCreator.SetMaximumCellSize(1e-2);
+	meshCreator.SetMaximumCellSize(cellsize);
 	meshCreator.CreateTriangleInput(domain);
 	meshCreator.CreateTriangleOutput(domain);
 	GenericMesh mesh;
@@ -54,7 +70,7 @@ int main()
 	unsigned numerotriangolioriginali = mesh.NumberOfCells();
 	srand(1);
 	for(unsigned i = 0; i < mesh.NumberOfCells(); i++)
-		if(rand()%100 < 20)
+		if(rand()%100 < percentuale)
 			refiner.PrepareForRefineCell(i);
 			
 		
