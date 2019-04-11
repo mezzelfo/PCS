@@ -1367,7 +1367,7 @@ namespace GeDiM
 					GenericEdge* edge = edges[idEdge];
 					//SE NON HA FIGLI IL LATO:
 					//1) AGGIUNGO IL LATO ALLA CELLA
-					//2) AGGIORNO LA CELLA DEL LATO PADRE CON LA CELLA FIGLIOmeshPointer->UpdateCell(Pippo->Id(),latoNuovo->Id());
+					//2) AGGIORNO LA CELLA DEL LATO PADRE CON LA CELLA FIGLIO
 					if(!edge->HasChilds())
 					{
 						cellChild.AddEdge(edge);
