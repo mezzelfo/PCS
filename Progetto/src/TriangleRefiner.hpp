@@ -42,7 +42,7 @@ namespace GeDiM
 			return (idEdgesToCut.at(C->Edge(0)->Id())) or (idEdgesToCut.at(C->Edge(1)->Id())) or (idEdgesToCut.at(C->Edge(2)->Id()));
 		}
 
-		// Ritorna true se la cella è sul bordo. Confinare con la cella NULL significa essere sul bordo
+		// Ritorna true se il lato è sul bordo. Confinare con la cella NULL significa essere sul bordo
 		bool IsOnBorder(const GenericEdge* E)
 		{
 			return (E->Cell(0) == NULL) or (E->Cell(1) == NULL);
@@ -151,7 +151,7 @@ namespace GeDiM
 		return false;
 		}
 
-		// Funzione che gira la cella e marcha da tagliare il lato più lungo
+		// Funzione che gira la cella e marca da tagliare il lato più lungo
 		void PrepareForRefineCell(const unsigned int& value);
 
 		// Rifinisci la mesh in maniera conforme
