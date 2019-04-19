@@ -107,7 +107,7 @@ namespace GeDiM
 		}
 
 		// Dato un lato e una cella ad esso adiacente, ritorna l'altra cella adiacente al lato
-		const GenericCell* ScegliAltra(const GenericEdge* E, const GenericCell* me)
+		const GenericCell* OtherAdjacentCell(const GenericEdge* E, const GenericCell* me)
 		{
 			if (E->RightCell() == me)
 				return E->LeftCell();
@@ -142,7 +142,7 @@ namespace GeDiM
 		}
 
 		// Ritorna true se nel vettore c'è ancora almento un true
-		bool QualcunoDaTagliare()
+		bool anyTriangleToCut()
 		{
 		for(unsigned edgeId = 0; edgeId < meshPointer->NumberOfEdges(); edgeId++)
 			if (idEdgesToCut.at(edgeId))
@@ -152,7 +152,7 @@ namespace GeDiM
 		}
 
 		// Funzione che gira la cella e marca da tagliare il lato più lungo
-		void PrepareForRefineCell(const unsigned int& value);
+		void PrepareTriangle(const unsigned int& value);
 
 		// Rifinisci la mesh in maniera conforme
 		Output::ExitCodes RefineMesh();

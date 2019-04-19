@@ -5,7 +5,7 @@ namespace GeDiM
 	Output::ExitCodes TriangleRefiner::RefineMesh()
 	{
 		unsigned edgeId = 0;
-		while(QualcunoDaTagliare())		
+		while(anyTriangleToCut())		
 		{
 			edgeId = (edgeId+1)%meshPointer->NumberOfEdges();
 			if (not idEdgesToCut.at(edgeId))
@@ -34,8 +34,8 @@ namespace GeDiM
 
 			if(L->IsActive())
 			{
-				if (L->HasRightCell()) PrepareForRefineCell(L->RightCell()->Id());
-				if (L->HasLeftCell()) PrepareForRefineCell(L->LeftCell()->Id());
+				if (L->HasRightCell()) PrepareTriangle(L->RightCell()->Id());
+				if (L->HasLeftCell()) PrepareTriangle(L->LeftCell()->Id());
 			}
 		}
 		return Output::Success;
@@ -65,7 +65,7 @@ namespace GeDiM
 			C->InsertPoint(tmp,1);
 		}
 	}
-	void TriangleRefiner::PrepareForRefineCell(const unsigned int& value)
+	void TriangleRefiner::PrepareTriangle(const unsigned int& value)
 	{
 		GenericCell* C = meshPointer->Cell(value);
 		const GenericEdge* L = LongestEdge(C);
@@ -157,13 +157,13 @@ namespace GeDiM
 		longest->SetState(false);
 
 		if (HasMarkedEdges(C0_0))
-			PrepareForRefineCell(C0_0->Id());
+			PrepareTriangle(C0_0->Id());
 		if (HasMarkedEdges(C0_1))
-			PrepareForRefineCell(C0_1->Id());
+			PrepareTriangle(C0_1->Id());
 		if (HasMarkedEdges(C1_0))
-			PrepareForRefineCell(C1_0->Id());
+			PrepareTriangle(C1_0->Id());
 		if (HasMarkedEdges(C1_1))
-			PrepareForRefineCell(C1_1->Id());
+			PrepareTriangle(C1_1->Id());
 
 	}
 	void TriangleRefiner::RefineBorderTriangle(GenericCell* C0)
@@ -212,8 +212,8 @@ namespace GeDiM
 		longest->SetState(false);
 
 		if (HasMarkedEdges(C0_0))
-			PrepareForRefineCell(C0_0->Id());
+			PrepareTriangle(C0_0->Id());
 		if (HasMarkedEdges(C0_1))
-			PrepareForRefineCell(C0_1->Id());
+			PrepareTriangle(C0_1->Id());
 	}
 }

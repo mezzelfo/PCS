@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
 	srand(1);
 	for(unsigned i = 0; i < mesh.NumberOfCells(); i++)
 		if(rand()%100 < percentuale)
-			refiner.PrepareForRefineCell(i);
+			refiner.PrepareTriangle(i);
 			
 		
 	refiner.RefineMesh();
