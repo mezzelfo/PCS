@@ -4,35 +4,35 @@ namespace GeDiM
 {
 	Output::ExitCodes TriangleRefiner::RefineMesh()
 	{
-	    unsigned edgeId = 0;
-	    while(QualcunoDaTagliare())		
-        {
-        	edgeId = (edgeId+1)%meshPointer->NumberOfEdges();
-        	if (not idEdgesToCut.at(edgeId))
-	        	continue;
+		unsigned edgeId = 0;
+		while(QualcunoDaTagliare())		
+		{
+			edgeId = (edgeId+1)%meshPointer->NumberOfEdges();
+			if (not idEdgesToCut.at(edgeId))
+				continue;
 
-            GenericEdge* L = meshPointer->Edge(edgeId);
+			GenericEdge* L = meshPointer->Edge(edgeId);
 
-          	if (not IsOnBorder(L)) // Se il lato è confinante con due triangoli
-            {
-                GenericCell* C0 = meshPointer->Cell(L->Cell(0)->Id());
-                GenericCell* C1 = meshPointer->Cell(L->Cell(1)->Id());
-                if (LongestEdge(C0) == LongestEdge(C1))
-                {
-                    RefinePairedTriangles(C0,C1);
-                    idEdgesToCut.at(edgeId) = false;
-                }
-            }
-            else // Se il lato è di bordo
-            {
-                GenericCell* C0;
-                if (L->Cell(0) == NULL) C0 = meshPointer->Cell(L->Cell(1)->Id());
-                if (L->Cell(1) == NULL) C0 = meshPointer->Cell(L->Cell(0)->Id());
+		  	if (not IsOnBorder(L)) // Se il lato è confinante con due triangoli
+			{
+				GenericCell* C0 = meshPointer->Cell(L->Cell(0)->Id());
+				GenericCell* C1 = meshPointer->Cell(L->Cell(1)->Id());
+				if (LongestEdge(C0) == LongestEdge(C1))
+				{
+					RefinePairedTriangles(C0,C1);
+					idEdgesToCut.at(edgeId) = false;
+				}
+			}
+			else // Se il lato è di bordo
+			{
+				GenericCell* C0;
+				if (L->Cell(0) == NULL) C0 = meshPointer->Cell(L->Cell(1)->Id());
+				if (L->Cell(1) == NULL) C0 = meshPointer->Cell(L->Cell(0)->Id());
 				RefineBorderTriangle(C0);
 				idEdgesToCut.at(edgeId) = false;
-            }
+			}
 
-            if(L->IsActive())
+			if(L->IsActive())
 			{
 				if (L->HasRightCell()) PrepareForRefineCell(L->RightCell()->Id());
 				if (L->HasLeftCell()) PrepareForRefineCell(L->LeftCell()->Id());
@@ -47,13 +47,13 @@ namespace GeDiM
 		if (L == C->Edge(1))
 		{
 			C->InsertEdge(C->Edge(2),1);
-            C->InsertEdge(C->Edge(0),2);
+			C->InsertEdge(C->Edge(0),2);
 			C->InsertEdge(L,0);
 		}
 		else if (L == C->Edge(2))
 		{
 			C->InsertEdge(C->Edge(1),2);
-            C->InsertEdge(C->Edge(0),1);
+			C->InsertEdge(C->Edge(0),1);
 			C->InsertEdge(L,0);
 		}
 		// Rotate Points
@@ -61,7 +61,7 @@ namespace GeDiM
 		{
 			const GenericPoint* tmp = C->Point(0);
 			C->InsertPoint(C->Point(2),0);
-            C->InsertPoint(C->Point(1),2);
+			C->InsertPoint(C->Point(1),2);
 			C->InsertPoint(tmp,1);
 		}
 	}
