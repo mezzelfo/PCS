@@ -17,17 +17,17 @@ namespace GeDiM
 			Seguono dichiarazione e definizione di funzioni semplici o di supporto
 		*/
 		// Ritorna la distanza tra due punti
-		static double Distance(const GenericPoint* P1, const GenericPoint* P2)
+		static double SqrDistance(const GenericPoint* P1, const GenericPoint* P2)
 		{
-			return (P1->Coordinates()-P2->Coordinates()).norm();
+			return (P1->Coordinates()-P2->Coordinates()).squaredNorm();
 		}
 
 		// Ritorna il lato più lungo di una cella
 		const GenericEdge* LongestEdge(const GenericCell* C)
 		{
-			double a = Distance(C->Edge(0)->Point(0),C->Edge(0)->Point(1));
-			double b = Distance(C->Edge(1)->Point(0),C->Edge(1)->Point(1));
-			double c = Distance(C->Edge(2)->Point(0),C->Edge(2)->Point(1));
+			double a = SqrDistance(C->Edge(0)->Point(0),C->Edge(0)->Point(1));
+			double b = SqrDistance(C->Edge(1)->Point(0),C->Edge(1)->Point(1));
+			double c = SqrDistance(C->Edge(2)->Point(0),C->Edge(2)->Point(1));
 			if ((a >= b) and (a >= c))
 				return C->Edge(0);
 			else if ((b >= a) and (b >= c))
@@ -104,14 +104,6 @@ namespace GeDiM
 			C->AddEdge(E0);
 			C->AddEdge(E1);
 			C->AddEdge(E2);
-		}
-
-		// Dato un lato e una cella ad esso adiacente, ritorna l'altra cella adiacente al lato
-		const GenericCell* OtherAdjacentCell(const GenericEdge* E, const GenericCell* me)
-		{
-			if (E->RightCell() == me)
-				return E->LeftCell();
-			return E->RightCell();
 		}
 
 		/*
