@@ -13,17 +13,7 @@ namespace GeDiM
 
 			GenericEdge* L = meshPointer->Edge(edgeId);
 
-		  	if (not IsOnBorder(L)) // Se il lato è confinante con due triangoli
-			{
-				GenericCell* C0 = meshPointer->Cell(L->Cell(0)->Id());
-				GenericCell* C1 = meshPointer->Cell(L->Cell(1)->Id());
-				if (LongestEdge(C0) == LongestEdge(C1))
-				{
-					RefinePairedTriangles(C0,C1);
-					idEdgesToCut.at(edgeId) = false;
-				}
-			}
-			else // Se il lato è di bordo
+			if (IsOnBorder(L))
 			{
 				GenericCell* C0;
 				if (L->Cell(0) == NULL) C0 = meshPointer->Cell(L->Cell(1)->Id());
@@ -31,8 +21,14 @@ namespace GeDiM
 				RefineBorderTriangle(C0);
 				idEdgesToCut.at(edgeId) = false;
 			}
-
-			if(L->IsActive())
+			else if (LongestEdge(L->Cell(0)) == LongestEdge(L->Cell(1)))
+			{
+				GenericCell* C0 = meshPointer->Cell(L->Cell(0)->Id());
+				GenericCell* C1 = meshPointer->Cell(L->Cell(1)->Id());
+				RefinePairedTriangles(C0,C1);
+				idEdgesToCut.at(edgeId) = false;
+			}
+			else
 			{
 				if (L->HasRightCell()) PrepareTriangle(L->RightCell()->Id());
 				if (L->HasLeftCell()) PrepareTriangle(L->LeftCell()->Id());
