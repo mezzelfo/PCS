@@ -13,10 +13,11 @@ namespace GeDiM
 	class TriangleRefiner
 	{
 	private:
-		/*
-			Seguono dichiarazione e definizione di funzioni semplici o di supporto
+	    /*
+         Seguono dichiarazione e definizione di funzioni semplici o di supporto
 		*/
-		// Ritorna la distanza tra due punti
+
+        // Ritorna la distanza tra due punti
 		static double SqrDistance(const GenericPoint* P1, const GenericPoint* P2)
 		{
 			return (P1->Coordinates()-P2->Coordinates()).squaredNorm();
@@ -36,13 +37,13 @@ namespace GeDiM
 				return C->Edge(2);
 		}
 
-		// Ritorna true se la cella ha almeno un lato marcato
+		// Ritorna true se il triangolo ha almeno un lato marcato
 		bool HasMarkedEdges(const GenericCell* C)
 		{
 			return (idEdgesToCut.at(C->Edge(0)->Id())) or (idEdgesToCut.at(C->Edge(1)->Id())) or (idEdgesToCut.at(C->Edge(2)->Id()));
 		}
 
-		// Ritorna true se il lato è sul bordo. Confinare con la cella NULL significa essere sul bordo
+		// Ritorna true se il lato è sul bordo ovvero confina con una cella NULL
 		bool IsOnBorder(const GenericEdge* E)
 		{
 			return (E->Cell(0) == NULL) or (E->Cell(1) == NULL);
@@ -59,7 +60,7 @@ namespace GeDiM
 		{
 			GenericEdge* E = meshPointer->CreateEdge();
 			meshPointer->AddEdge(E);
-			idEdgesToCut.push_back(false);
+			idEdgesToCut.push_back(false);     //Creando un lato è necessario estendere idEdgesToCut perchè lo comprenda
 			return E;
 		}
 		GenericCell* NewCell()
@@ -69,18 +70,17 @@ namespace GeDiM
 			return C;
 		}
 
-		// Inizializza un lato vuoto con informazioni geometriche di punti e celle
+		// Riempie un lato vuoto con informazioni geometriche di punti e celle
 		void SetEdgeGeometry(GenericEdge* E, const GenericPoint* P0, const GenericPoint* P1, const GenericCell* right, const GenericCell* left)
 		{
-			//Chiedere a berrone perchè manca E->InitializePoint(2);
 			E->AddPoint(P0);
 			E->AddPoint(P1);
 			E->InitializeCells(2);
-			E->AddCell(right);	//RightCell = cell[0]
-			E->AddCell(left);	//LeftCell = cell[1]
+			E->AddCell(right);	// RightCell = cell[0]
+			E->AddCell(left);	// LeftCell = cell[1]
 		}
 
-		// Inizializza le informazioni di parentela di un padre e due figli (situazione più  usuale)
+		// Inizializza le informazioni di parentela fra un padre e due figli
 		void SetFamily(GenericTreeNode* father, GenericTreeNode* C1, GenericTreeNode* C2)
 		{
 			father->InitializeChilds(2);
@@ -89,8 +89,8 @@ namespace GeDiM
 			C1->SetFather(father);
 			C2->SetFather(father);
 		}
-		
-		// Inizializzano le informazioni geometriche (solo punti e lati) di una cella vuota
+
+		// Inizializzano le informazioni geometriche su punti e lati di una cella vuota
 		void SetCellPoints(GenericCell* C, const GenericPoint* P0, const GenericPoint* P1, const GenericPoint* P2)
 		{
 			C->InitializePoints(3);
@@ -107,18 +107,19 @@ namespace GeDiM
 		}
 
 		/*
-			Seguono dichiarazioni di funzioni algoritmiche importanti o complesse
+		 Seguono dichiarazioni di funzioni algoritmiche importanti o complesse
 		*/
-		void RotateCell(GenericCell* C);								// Riordina i puntatori a lati e punti della cella in modo coerente
-		void PensaciTuAlLatoIgnoto(GenericCell* C, GenericEdge* E);		// Sistema le condizioni di vicinanza tra una cella ed un lato "esterno"
+		void RotateCell(GenericCell* C);								// Riordina i puntatori a lati e punti del triangolo in modo coerente
+		void PensaciTuAlLatoIgnoto(GenericCell* C, GenericEdge* E);		// Sistema le condizioni di vicinanza tra un triangolo ed un lato "esterno"
 		void RefinePairedTriangles(GenericCell* C0, GenericCell* C1);	// Taglia contemporanemante due triangoli che condividono il lato lungo
 		void RefineBorderTriangle(GenericCell* C0);						// Taglia un triangolo che ha il lato lungo sul bordo della mesh
 
 		/*
 			Membri della classe TriangleRefiner
 		*/
+
 		GenericMesh* meshPointer;	// Puntatore alla mesh
-		vector<bool> idEdgesToCut;	// Vettore di bool. Se l'elemento n-esimo del vettore è true allora l'edge con id=n è da tagliare
+		vector<bool> idEdgesToCut;	// Vettore di variabili booleane. Se l'elemento n-esimo del vettore è true allora il lato con id = n è da tagliare
 
 	public:
 		// Nel costruttore richiedo una mesh e preparo il vettore di bool grande abbastanza
@@ -133,20 +134,20 @@ namespace GeDiM
 			idEdgesToCut.clear();
 		}
 
-		// Ritorna true se nel vettore c'è ancora almento un true
+		// Ritorna true se nel vettore c'è ancora almeno un true
 		bool anyTriangleToCut()
 		{
 		for(unsigned edgeId = 0; edgeId < meshPointer->NumberOfEdges(); edgeId++)
 			if (idEdgesToCut.at(edgeId))
 				return true;
-			
+
 		return false;
 		}
 
-		// Funzione che gira la cella e marca da tagliare il lato più lungo
+		// Funzione che ruota la cella e marca da tagliare il lato più lungo
 		void PrepareTriangle(const unsigned int& value);
 
-		// Rifinisci la mesh in maniera conforme
+		// Raffina la mesh in maniera conforme
 		Output::ExitCodes RefineMesh();
 	};
 }
