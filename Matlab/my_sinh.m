@@ -1,4 +1,4 @@
-function [output] = my_sinh(x_true)
+function [y] = my_sinh(x_true)
 %MY_SINH Very clever sinh(x) implementation
 %   Different implementation for different x values ranges (for x in Reals)
 %
@@ -19,13 +19,10 @@ function [output] = my_sinh(x_true)
 %   +------------+------------+---------------------...--+----------+
 %
 %
-x = abs(x_true);                                                        %Partially implement NOTE1
-output = (exp(x)-exp(-x))./2;                                           %Naive Implementation is provided as base case
-x_tmp = x(x<(5040*eps)^(1/7));                                          %Support vector for taylor series
-output(x<(5040*eps)^(1/7)) = x_tmp+(x_tmp.^3)./6+(x_tmp.^5)./120;       %Taylor Series
-output(x>log(1+1/eps)/2) = exp(x(x>log(1+1/eps)/2))./2;                 %Implemented DEDUCE4
-output(x>log(2*realmax)) = inf;                                         %Implemented NOTE5
+x = abs(x_true);
+y((0<=x)&(x<=22)) = (exp(x)-1+(exp(x)-1)./(exp(x)))/2;
 
-output(x_true<0) = -output(x_true<0);                                   %Finished implementing NOTE1
+
+y(x_true<0) = -y(x_true<0);                                   %Finished implementing NOTE1
 end
 

@@ -1,5 +1,5 @@
 clc
-x_ax = 10.^(-12:12);
+x_ax = 10.^(-12:0);
 y_true = sinh(x_ax);
 y_naive = naive_sinh(x_ax);
 err_ass = abs(y_true-y_naive);
