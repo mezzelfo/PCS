@@ -161,6 +161,9 @@ void TriangleRefiner::RefinePairedTriangles(GenericCell *C0, GenericCell *C1)
 	C1->SetState(false);
 	longest->SetState(false);
 
+	//Eredita marker
+	midpoint->SetMarker(longest->Marker());
+
 	// Se i sottotriangoli creati hanno lati marcati li preparo per il raffinamento
 	if (HasMarkedEdges(C0_0))
 		PrepareTriangle(C0_0->Id());
@@ -216,6 +219,9 @@ void TriangleRefiner::RefineBorderTriangle(GenericCell *C0)
 	// Disattivo il triangolo padre e il lato padre
 	C0->SetState(false);
 	longest->SetState(false);
+
+    //Eredita marker
+	midpoint->SetMarker(longest->Marker());
 
 	// Se i sottotriangoli creati hanno lati marcati li preparo per il raffinamento
 	if (HasMarkedEdges(C0_0))
