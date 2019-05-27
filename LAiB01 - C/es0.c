@@ -1,57 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "tool.h"
 
 int main()
 {
-	// Variabili
-	int n;		// Numero di caratteri da leggere
-	int i;		// Variabile di ciclo
-	char* vett;	// Vettore per immagazzinare i caratteri
+    unsigned N, i;
+    char tmp, *vett;
 
-	// Istruzioni
-	// Acquisisco da standard input il numero di caratteri da immagazzinare
-	printf("Inserisci la dimensione del vettore\n");
-	if(scanf(" %d", &n) != 1)
-		runtimeError("Non ho capito la dimensione");
+    printf("Inserire la dimensione del vettore: ");
+    scanf(" %d", &N);
+    vett = (char *)malloc(N * sizeof(char));
+    if (vett == NULL)
+        exit(EXIT_FAILURE);
 
-	// Alloco memoria richiesta in modo sicuro
-	vett = (char*) secAlloc(sizeof(char)*n);
+    printf("Inserire i %d caratteri\n", N);
+    for (i = 0; i < N; i++)
+        scanf(" %c", &(vett[i]));
 
-	// Leggo i caratteri da standard input
-	printf("Inserisci i %d caratteri\n", n);
-	for (i = 0; i < n; ++i)
-	{
-		if(scanf(" %c", &(vett[i]))!=1)
-			runtimeError("Non ho capito il carattere appena inserito");
-		#if VERBOSITY >= 1
-		printf("Ho letto %c\n", vett[i]);
-		#endif
-	}
+#if VERBOSITY >= 1
+    for (i = 0; i < N; i++)
+        printf("Carattere %d: %c", i, vett[i]);
+#endif
 
-	// Rigiro il vettore:
-	// Il ciclo scambia per la prima metà del vettore
-	// ogni elemento con il suo speculare
-	printf("Rigiro il vettore\n");
-	for (i = 0; i <= (int)(n/2-1); ++i)
-	{
-		char temp;	// Variabile d'appoggio per lo scambio dei caratteri
-		temp = vett[i];
-		vett[i] = vett[n-i-1];
-		vett[n-i-1] = temp;
-		#if VERBOSITY >= 2
-		printf("Ho scambiato %c con %c\n", vett[i], vett[n-i-1]);
-		#endif
-	}
+    for (i = 0; i < N / 2; i++)
+    {
+#if VERBOSITY >= 1
+        printf("Scambio %c con %c", vett[i], vett[N - i - 1]);
+#endif
+        tmp = vett[i];
+        vett[i] = vett[N - i - 1];
+        vett[N - i - 1] = tmp;
+    }
+    printf("Risultato:\n");
+    for (i = 0; i < N; i++)
+        printf("%c\n", vett[i]);
 
-	// Stampo il vettore rigirato
-	printf("Stampo il vettore\n");
-	for (i = 0; i < n; ++i)
-		printf("%c\n", vett[i]);
-
-	// Libero la memoria allocata
-	free(vett);
-
-	//Termino il programma
-	return 0;
+    free(vett);
+    return 0;
 }
