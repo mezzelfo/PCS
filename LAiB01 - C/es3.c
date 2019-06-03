@@ -1,8 +1,4 @@
-/*
-    Viene dato file data_es2_input con un numero non noto di righe. Ogni riga rispetta la struct Data.
-    Si memorizzi il file in una lista doppiamente concatenata. Infine si scriva tale lista in ordine inverso su disco.
-    NOTO: il problema può essere risolto usando una pila implementata come lista semplice, senza aumentare il costo computazionale.
-*/
+//NOTO: il problema può essere risolto usando una pila implementata come lista semplice, senza aumentare il costo computazionale.
 
 #include <stdio.h>
 #include <stdlib.h>

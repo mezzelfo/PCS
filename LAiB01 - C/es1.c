@@ -1,12 +1,5 @@
-/*
-    Leggere dallo stdin una serie di N caratteri.
-    Dopo averli memorizzati in un vettore, ribaltarlo.
-    Si scriva una funzione che esegua lo scambio
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
-
 // vett: puntatore a vettore di caratteri.
 // Scambiare caratteri in posizione i e j
 void scambia(char *vett, unsigned i, unsigned j)
@@ -21,8 +14,7 @@ int main()
     // N: dimesione del vettore. vett indirizzo del vettore. i variabile d'appoggio
     unsigned N, i;
     char *vett;
-
-    // Leggo da stdin la dimensione N e alloco la memoria, controllando eventuali errori.
+    // Leggo da stdin la dimensione N e alloco memoria, controllando per errori.
     printf("Inserire la dimensione del vettore: ");
     scanf(" %d", &N);
     vett = (char *)malloc(N * sizeof(char));
@@ -53,7 +45,6 @@ int main()
     printf("Risultato:\n");
     for (i = 0; i < N; i++)
         printf("%c\n", vett[i]);
-
     // Libero la memoria e termino
     free(vett);
     return 0;

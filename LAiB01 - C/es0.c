@@ -1,8 +1,3 @@
-/*
-    Leggere dallo stdin una serie di N caratteri.
-    Dopo averli memorizzati in un vettore, ribaltarlo.
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -45,7 +40,6 @@ int main()
     printf("Risultato:\n");
     for (i = 0; i < N; i++)
         printf("%c\n", vett[i]);
-
     // Libero la memoria e termino
     free(vett);
     return 0;

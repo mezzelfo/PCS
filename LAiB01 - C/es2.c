@@ -1,8 +1,3 @@
-/*
-    Viene dato file data_es2_input con un numero non noto di righe. Ogni riga rispetta la struct Data.
-    Si memorizzi il file in un vettore, lo si ribalti e, infine, si memorizzi il vettore su disco.
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 
