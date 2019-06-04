@@ -10,13 +10,15 @@ Matrice allocaMatrice(const unsigned ndim)
 	m = (Matrice)malloc(ndim * sizeof(Vettore));
 
 	// Controllo che l'allocazione sia andata a buon fine
-	if (m == NULL) {
+	if (m == NULL)
+	{
 		fprintf(stderr, "Allocazione non riuscita\n");
 		exit(EXIT_FAILURE);
 	}
 
 	// Alloco i vettori riga
-	for (i = 0; i < ndim; i++) m[i] = allocaVettore(ndim);
+	for (i = 0; i < ndim; i++)
+		m[i] = allocaVettore(ndim);
 
 	// Ritorno la matrice allocata
 	return m;
@@ -28,7 +30,8 @@ void liberaMatrice(Matrice m, const unsigned ndim)
 	unsigned i;
 
 	// Libero ogni vettore riga
-	for (i = 0; i < ndim; i++) free(m[i]);
+	for (i = 0; i < ndim; i++)
+		free(m[i]);
 
 	// Libero la matrice (l'unico vettore colonna)
 	free(m);
@@ -41,9 +44,10 @@ Vettore allocaVettore(const unsigned ndim)
 
 	// Alloco memoria
 	v = (Vettore)malloc(ndim * sizeof(Elemento));
-	
+
 	// Controllo che l'allocazione sia andata a buon fine
-	if (v == NULL) {
+	if (v == NULL)
+	{
 		fprintf(stderr, "Allocazione non riuscita\n");
 		exit(EXIT_FAILURE);
 	}
@@ -52,21 +56,21 @@ Vettore allocaVettore(const unsigned ndim)
 	return v;
 }
 
-int* fattorizzazioneLU(Matrice* m, const unsigned ndim)
+int *fattorizzazioneLU(Matrice *m, const unsigned ndim)
 {
 	// Variabili
-	unsigned i,j,k;
-	int* pivot;
+	unsigned i, j, k;
+	int *pivot;
 	Vettore tmp;
 
 	// Istruzioni
 	// Alloco la memoria per il vettore delle informazioni per ricostruire il pivoting
-	pivot = (int*)malloc(ndim*sizeof(int));
+	pivot = (int *)malloc(ndim * sizeof(int));
 	// Riempio il pivot con [0,1,2,3,...] in modo da poi saper riordinarlo
-	for(i=0; i<ndim; i++) pivot[i]=i;
+	for (i = 0; i < ndim; i++)
+		pivot[i] = i;
 
-
-	for (k = 0; k<ndim-1; k++)
+	for (k = 0; k < ndim - 1; k++)
 	{
 		// Variabili
 		int temp, ind_max;
@@ -74,13 +78,9 @@ int* fattorizzazioneLU(Matrice* m, const unsigned ndim)
 		//Istruzioni
 		// Cerco l'indice dell'elemento per effettuare il pivoting
 		ind_max = k;
-		for (i = k+1; i < ndim; i++)
-		{
-			if(fabs((*m)[i][k]) > fabs((*m)[ind_max][k]))
-			{
+		for (i = k + 1; i < ndim; i++)
+			if (fabs((*m)[i][k]) > fabs((*m)[ind_max][k]))
 				ind_max = i;
-			}
-		}
 
 		// Effettuo il pivoting tra la riga k e la riga ind_max
 		tmp = (*m)[ind_max];
@@ -93,15 +93,13 @@ int* fattorizzazioneLU(Matrice* m, const unsigned ndim)
 		pivot[k] = temp;
 
 		// Eseguo l'eliminazione gaussiana
-		for (i = k+1; i < ndim; i++)
+		for (i = k + 1; i < ndim; i++)
 		{
-			if(fabs((*m)[k][k]) > TOL)
+			if (fabs((*m)[k][k]) > TOL)
 			{
-				(*m)[i][k] = (*m)[i][k]/(*m)[k][k];
-				for (j = k+1; j < ndim; j++)
-				{
-					(*m)[i][j] -= (*m)[i][k]*(*m)[k][j];
-				}
+				(*m)[i][k] = (*m)[i][k] / (*m)[k][k];
+				for (j = k + 1; j < ndim; j++)
+					(*m)[i][j] -= (*m)[i][k] * (*m)[k][j];
 			}
 			else
 			{
@@ -113,7 +111,6 @@ int* fattorizzazioneLU(Matrice* m, const unsigned ndim)
 
 	// Ritorno il vettore contenente le informazioni dei pivoting effettuati
 	return pivot;
-	
 }
 
 Vettore backwardSubstitution(const Matrice a, const Vettore y, const unsigned ndim)
@@ -127,15 +124,13 @@ Vettore backwardSubstitution(const Matrice a, const Vettore y, const unsigned nd
 	x = allocaVettore(ndim);
 
 	// Eseguo sostituzione all'indietro
-	for (j = ndim-1; j >= 0; j--)
+	for (j = ndim - 1; j >= 0; j--)
 	{
 		Elemento sum;
 		sum = 0.0;
-		for (i = j+1; i < ndim; ++i)
-		{
-			sum += a[j][i]*x[i];
-		}
-		x[j] = (y[j] - sum)/a[j][j];
+		for (i = j + 1; i < ndim; ++i)
+			sum += a[j][i] * x[i];
+		x[j] = (y[j] - sum) / a[j][j];
 	}
 
 	// Ritorno il vettore di soluzioni
@@ -146,7 +141,7 @@ Vettore forwardSubstitution(const Matrice a, const Vettore y, const unsigned ndi
 {
 	// Variabili
 	Vettore x;
-	unsigned i,j;
+	unsigned i, j;
 
 	// Alloco vettore delle incognite
 	x = allocaVettore(ndim);
@@ -158,7 +153,7 @@ Vettore forwardSubstitution(const Matrice a, const Vettore y, const unsigned ndi
 		sum = 0;
 		for (i = 0; i < j; ++i)
 		{
-			sum += a[j][i]*x[i];
+			sum += a[j][i] * x[i];
 		}
 		x[j] = (y[j] - sum);
 	}
@@ -167,7 +162,7 @@ Vettore forwardSubstitution(const Matrice a, const Vettore y, const unsigned ndi
 	return x;
 }
 
-Vettore permVett(const int* const pivot, const Vettore y, const unsigned ndim)
+Vettore permVett(const int *const pivot, const Vettore y, const unsigned ndim)
 {
 	// Variabili
 	unsigned i;
@@ -177,7 +172,8 @@ Vettore permVett(const int* const pivot, const Vettore y, const unsigned ndim)
 	Py = allocaVettore(ndim);
 
 	// Riempio Py in modo permutato secondo il vettore pivot
-	for(i=0;i<ndim;i++) Py[pivot[i]] = y[i];
+	for (i = 0; i < ndim; i++)
+		Py[pivot[i]] = y[i];
 
 	// Ritorno il vettore permutato
 	return Py;
@@ -186,7 +182,7 @@ Vettore permVett(const int* const pivot, const Vettore y, const unsigned ndim)
 Vettore risolviSistemaLineare(Matrice A, Vettore y, const unsigned ndim)
 {
 	// Variabili
-	int* pivot;
+	int *pivot;
 	Vettore Py;
 	Vettore tmp;
 	Vettore sol;

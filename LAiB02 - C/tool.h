@@ -9,7 +9,7 @@
 #define TOL 1e-10
 
 // Typedef per brevità
-typedef double Elemento;
+typedef long double Elemento;
 typedef Elemento* Vettore;
 typedef Vettore* Matrice;
 
