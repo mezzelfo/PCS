@@ -274,4 +274,70 @@ Con riferimento al punto precedente, aggiungiamo al grafico le curve teoriche ri
 \includegraphics[width=0.71\textwidth]{./Esercizi_images/untitled5.eps}
 \end{center}
 
+\clearpage
+\subsection*{Vettori, matrici e sistemi lineari - 11}
+Come richiesto, vengono generalizzati esercizi 8-10 considerando una matrice triangolare a blocchi $q \times q$ costituita, per semplicità, da blocchi quadrati di dimensione $n/q$.
+
+\begin{lstlisting}
+	n = factorial(6);
+	asseq = divisors(n);
+	res = zeros(n,5); %naif_vero, naif_teo, smart_vero, smart_teo, norma diff
+	for q = asseq
+		%Definisco dimensione caratteristica
+		d = n/q;
+		%Genero la matrice A come cell array di matrici quadrate di double
+		Acell = repmat({zeros(d)},q,q);
+		
+		for i=1:q
+			for j=i:q
+				Acell(i,j) = {rand(d)};
+			end
+		end
+		
+		%Per il primo caso ho bisogno di generare tutta la matrice di double
+		%Inoltre mi serve anche per definire il vettore dei termini noti
+		A = cell2mat(Acell); 
+		
+		%Calcolo vettore termini noti
+		b = A*ones(n,1);
+		
+		%PRIMO CASO
+		tic;
+		%x_naif = A\b;
+		x_naif = GAUSS_ELIM(A,b);
+		res(q,1) = toc;
+		res(q,2) = n^3/3+n^2/2;
+		clear A;                %Libero memoria
+		
+		%SECONDO CASO
+		x_smart = repmat({zeros(d)},q,1);
+		tic;
+		for j=q:-1:1
+			noto = b((d*(j-1)+1):(d*j));      
+				for k=q:-1:(j+1)
+					noto = noto - Acell{j,k}*x_smart{k};
+				end
+			%x_smart{j} = Acell{j,j}\noto;
+			x_smart{j} = GAUSS_ELIM(Acell{j,j},noto);
+		end
+		res(q,3) = toc;
+		res(q,4) = n^3/(3*q^2)+n^2/2;
+		
+		%Controllo risultati
+		res(q,5) = norm(x_naif-cell2mat(x_smart),Inf);
+	end
+	%% PLOTS
+	figure();
+	yyaxis left
+	semilogx(asseq,res(asseq,1),'ob',asseq,res(asseq,3),'or');
+	yyaxis right
+	semilogx(asseq,res(asseq,2),'--b',asseq,res(asseq,4),'--r');
+	legend({'naif','smart'})
+	figure();
+	loglog(asseq,res(asseq,5),'og');
+\end{lstlisting}
+
+\includepdf{./Esercizi_images/untitled6.eps}
+\includepdf{./Esercizi_images/untitled7.eps}
+
 \end{document}
