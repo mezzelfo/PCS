@@ -147,6 +147,16 @@ public:
 			exit(EXIT_FAILURE);
 		}
 	}
+	const GenericCell *scegliAltra(const GenericEdge *E, const GenericCell *C0)
+	{
+		if (E->Cell(0) == C0)
+			return E->Cell(1);
+		else
+		{
+			assert(E->Cell(1) == C0);
+			return E->Cell(0);
+		}
+	}
 };
 } // namespace GeDiM
 

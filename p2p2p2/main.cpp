@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 		file << mesh.Cell(i)->Point(0)->Id() + 1 << "," << mesh.Cell(i)->Point(1)->Id() + 1 << "," << mesh.Cell(i)->Point(2)->Id() + 1 << ";" << endl;
 	}
 	file << "];" << endl;
-	file << "figure;trimesh(trianglesBefore, nodesBefore(:,1), nodesBefore(:,2));" << endl;
+	//file << "figure;trimesh(trianglesBefore, nodesBefore(:,1), nodesBefore(:,2));" << endl;
 
 	/// REFINE MESH
 	TriangleRefiner refiner;
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 		file << mesh.Cell(i)->Point(0)->Id() + 1 << "," << mesh.Cell(i)->Point(1)->Id() + 1 << "," << mesh.Cell(i)->Point(2)->Id() + 1 << ";" << endl;
 	}
 	file << "];" << endl;
-	file << "figure;trimesh(trianglesAfter, nodesAfter(:,1), nodesAfter(:,2));" << endl;
+	//file << "figure;trimesh(trianglesAfter, nodesAfter(:,1), nodesAfter(:,2));" << endl;
 	file << "figure;"
 		 << "hold on;"
 		 << "trimesh(trianglesAfter, nodesAfter(:,1), nodesAfter(:,2),'color', 'r');"
