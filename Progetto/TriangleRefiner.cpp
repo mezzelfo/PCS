@@ -273,7 +273,7 @@ Output::ExitCodes TriangleRefiner::TaglioInQuattro()
 	{
 		GenericCell *C = meshPointer->Cell(i);
 
-		RotateCell(C); //Serve?
+		//RotateCell(C); //Serve?
 
 		GenericPoint *Pm0 = NewPoint();
 		GenericPoint *Pm1 = NewPoint();
@@ -294,9 +294,6 @@ Output::ExitCodes TriangleRefiner::TaglioInQuattro()
 		GenericCell *C1 = NewCell();
 		GenericCell *C2 = NewCell();
 		GenericCell *C3 = NewCell();
-
-		const GenericCell *CellaTmp0;
-		const GenericCell *CellaTmp1;
 
 		GenericEdge *E0 = meshPointer->Edge(C->Edge(0)->Id());
 		GenericEdge *E1 = meshPointer->Edge(C->Edge(1)->Id());
@@ -323,10 +320,8 @@ Output::ExitCodes TriangleRefiner::TaglioInQuattro()
 
 			if (!IsOnBorder(E0))
 			{
-				CellaTmp0 = subEdge0_0->Cell(0);
-				CellaTmp1 = subEdge0_1->Cell(0);
-				C0->AddCell(CellaTmp0);
-				C1->AddCell(CellaTmp1);
+				C0->AddCell(subEdge0_0->Cell(0));
+				C1->AddCell(subEdge0_1->Cell(0));
 			}
 			else
 			{
@@ -345,17 +340,15 @@ Output::ExitCodes TriangleRefiner::TaglioInQuattro()
 		}
 		else
 		{
-			subEdge1_0 = meshPointer->Edge(E1->Child(0)->Id());
-			subEdge1_1 = meshPointer->Edge(E1->Child(1)->Id());
+			subEdge1_0 = meshPointer->Edge(E1->Child(1)->Id());
+			subEdge1_1 = meshPointer->Edge(E1->Child(0)->Id());
 			subEdge1_0->AddCell(C1);
 			subEdge1_1->AddCell(C2);
 
 			if (!IsOnBorder(E1))
 			{
-				CellaTmp0 = subEdge1_0->Cell(0);
-				CellaTmp1 = subEdge1_1->Cell(0);
-				C1->AddCell(CellaTmp0);
-				C2->AddCell(CellaTmp1);
+				C1->AddCell(subEdge1_0->Cell(0));
+				C2->AddCell(subEdge1_1->Cell(0));
 			}
 			else
 			{
@@ -381,10 +374,8 @@ Output::ExitCodes TriangleRefiner::TaglioInQuattro()
 
 			if (!IsOnBorder(E2))
 			{
-				CellaTmp0 = subEdge2_0->Cell(0);
-				CellaTmp1 = subEdge2_1->Cell(0);
-				C2->AddCell(CellaTmp0);
-				C0->AddCell(CellaTmp1);
+				C2->AddCell(subEdge2_0->Cell(0));
+				C0->AddCell(subEdge2_1->Cell(0));
 			}
 			else
 			{
