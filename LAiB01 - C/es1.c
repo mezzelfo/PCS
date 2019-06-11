@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 // vett: puntatore a vettore di caratteri.
 // Scambiare caratteri in posizione i e j
 void scambia(char *vett, unsigned i, unsigned j)
@@ -14,6 +15,7 @@ int main()
     // N: dimesione del vettore. vett indirizzo del vettore. i variabile d'appoggio
     unsigned N, i;
     char *vett;
+
     // Leggo da stdin la dimensione N e alloco memoria, controllando per errori.
     printf("Inserire la dimensione del vettore: ");
     scanf(" %d", &N);
@@ -25,7 +27,6 @@ int main()
     printf("Inserire i %d caratteri\n", N);
     for (i = 0; i < N; i++)
         scanf(" %c", &(vett[i]));
-
 #if VERBOSITY >= 1
     for (i = 0; i < N; i++)
         printf("Carattere %d: %c\n", i, vett[i]);
@@ -41,11 +42,10 @@ int main()
         scambia(vett, i, N - i - 1);
     }
 
-    // Stampo il risultato
+    // Stampo il risultato, libero la memoria e termino
     printf("Risultato:\n");
     for (i = 0; i < N; i++)
         printf("%c\n", vett[i]);
-    // Libero la memoria e termino
     free(vett);
     return 0;
 }

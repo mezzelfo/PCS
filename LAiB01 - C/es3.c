@@ -66,32 +66,29 @@ int main()
 }
 
 // Implementazione lista semplice
-/*int main()
-{
-     data *tmp, *head = NULL;
-    FILE *fp;
-
-    fp = fopen("data_es2_input", "r");
-    tmp = (data *)malloc(sizeof( data));
-    while (fscanf(fp, " %d %f %6s", &(tmp->n), &(tmp->f), tmp->s) != EOF)
-    {
-        tmp->next = head;
-        head = tmp;
-        tmp = (data *)malloc(sizeof(data));
-    }
-    free(tmp);
-    fclose(fp);
-
-    fp = fopen("data_es2_output", "w");
-    while (head != NULL)
-    {
-        fprintf(fp, " %d %f %6s\n", head->n, head->f, head->s);
-        tmp = head;
-        free(head);
-        head = tmp->next;
-    }
-    fclose(fp);
-
-    free(head);
-    return 0;
-}*/
+// int main()
+// {
+//      data *tmp, *head = NULL;
+//     FILE *fp;
+//     fp = fopen("data_es2_input", "r");
+//     tmp = (data *)malloc(sizeof( data));
+//     while (fscanf(fp, " %d %f %6s", &(tmp->n), &(tmp->f), tmp->s) != EOF)
+//     {
+//         tmp->next = head;
+//         head = tmp;
+//         tmp = (data *)malloc(sizeof(data));
+//     }
+//     free(tmp);
+//     fclose(fp);
+//     fp = fopen("data_es2_output", "w");
+//     while (head != NULL)
+//     {
+//         fprintf(fp, " %d %f %6s\n", head->n, head->f, head->s);
+//         tmp = head;
+//         free(head);
+//         head = tmp->next;
+//     }
+//     fclose(fp);
+//     free(head);
+//     return 0;
+// }

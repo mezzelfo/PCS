@@ -7,7 +7,7 @@ int main()
     unsigned N, i;
     char tmp, *vett;
 
-    // Leggo da stdin la dimensione N e alloco la memoria, controllando eventuali errori.
+    // Leggo da stdin la dimensione N e alloco la memoria
     printf("Inserire la dimensione del vettore: ");
     scanf(" %d", &N);
     vett = (char *)malloc(N * sizeof(char));
@@ -18,7 +18,6 @@ int main()
     printf("Inserire i %d caratteri\n", N);
     for (i = 0; i < N; i++)
         scanf(" %c", &(vett[i]));
-
 #if VERBOSITY >= 1
     for (i = 0; i < N; i++)
         printf("Carattere %d: %c\n", i, vett[i]);
@@ -36,11 +35,10 @@ int main()
         vett[N - i - 1] = tmp;
     }
 
-    // Stampo il risultato
+    // Stampo il risultato, libero la memoria e termino
     printf("Risultato:\n");
     for (i = 0; i < N; i++)
         printf("%c\n", vett[i]);
-    // Libero la memoria e termino
     free(vett);
     return 0;
 }
