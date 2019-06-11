@@ -220,7 +220,7 @@ void TriangleRefiner::RefineBorderTriangle(GenericCell *C0)
 	C0->SetState(false);
 	longest->SetState(false);
 
-    //Eredita marker
+	//Eredita marker
 	midpoint->SetMarker(longest->Marker());
 
 	// Se i sottotriangoli creati hanno lati marcati li preparo per il raffinamento
@@ -245,7 +245,7 @@ void TriangleRefiner::AggiornaInformazioniPunti()
 		//Ciclo su tutte le celle. Se contengono il punto aggiorno le informazioni dei punti
 		for (unsigned int j = 0; j < meshPointer->NumberOfCells(); j++)
 		{
-			const GenericCell* cella = meshPointer->Cell(j);
+			const GenericCell *cella = meshPointer->Cell(j);
 			if (punto->Id() == cella->Point(0)->Id())
 				punto->AddCell(cella);
 			if (punto->Id() == cella->Point(1)->Id())
@@ -256,13 +256,170 @@ void TriangleRefiner::AggiornaInformazioniPunti()
 		//Ciclo su tutti i lati. Se contengono il punto aggiorno le informazioni del punto
 		for (unsigned int j = 0; j < meshPointer->NumberOfEdges(); j++)
 		{
-			const GenericEdge* lato = meshPointer->Edge(j);
+			const GenericEdge *lato = meshPointer->Edge(j);
 			if (punto->Id() == lato->Point(0)->Id())
 				punto->AddEdge(lato);
 			if (punto->Id() == lato->Point(1)->Id())
 				punto->AddEdge(lato);
 		}
 	}
+}
+
+//SOLO NEL CASO SIANO TUTTI DA TAGLIARE
+Output::ExitCodes TriangleRefiner::TaglioInQuattro()
+{
+	unsigned int numCelleInizio = meshPointer->NumberOfCells();
+	for (unsigned int i = 0; i < numCelleInizio; i++)
+	{
+		GenericCell *C = meshPointer->Cell(i);
+
+		RotateCell(C); //Serve?
+
+		GenericPoint *Pm0 = NewPoint();
+		GenericPoint *Pm1 = NewPoint();
+		GenericPoint *Pm2 = NewPoint();
+
+		GenericEdge *subEdge0_0;
+		GenericEdge *subEdge0_1;
+		GenericEdge *subEdge1_0;
+		GenericEdge *subEdge1_1;
+		GenericEdge *subEdge2_0;
+		GenericEdge *subEdge2_1;
+
+		GenericEdge *median0 = NewEdge();
+		GenericEdge *median1 = NewEdge();
+		GenericEdge *median2 = NewEdge();
+
+		GenericCell *C0 = NewCell();
+		GenericCell *C1 = NewCell();
+		GenericCell *C2 = NewCell();
+		GenericCell *C3 = NewCell();
+
+		const GenericCell *CellaTmp0;
+		const GenericCell *CellaTmp1;
+
+		GenericEdge *E0 = meshPointer->Edge(C->Edge(0)->Id());
+		GenericEdge *E1 = meshPointer->Edge(C->Edge(1)->Id());
+		GenericEdge *E2 = meshPointer->Edge(C->Edge(2)->Id());
+
+		Pm0->SetCoordinates(0.5 * (C->Edge(0)->Point(0)->Coordinates() + C->Edge(0)->Point(1)->Coordinates()));
+		Pm1->SetCoordinates(0.5 * (C->Edge(1)->Point(0)->Coordinates() + C->Edge(1)->Point(1)->Coordinates()));
+		Pm2->SetCoordinates(0.5 * (C->Edge(2)->Point(0)->Coordinates() + C->Edge(2)->Point(1)->Coordinates()));
+
+		if (!E0->HasChilds())
+		{
+			subEdge0_0 = NewEdge();
+			subEdge0_1 = NewEdge();
+			SetFamily(E0, subEdge0_0, subEdge0_1);
+			SetEdgeGeometry_QuattroLati(subEdge0_0, C->Point(0), Pm0, C0);
+			SetEdgeGeometry_QuattroLati(subEdge0_1, Pm0, C->Point(1), C1);
+		}
+		else
+		{
+			subEdge0_0 = meshPointer->Edge(E0->Child(1)->Id());
+			subEdge0_1 = meshPointer->Edge(E0->Child(0)->Id());
+			subEdge0_0->AddCell(C0);
+			subEdge0_1->AddCell(C1);
+
+			if (!IsOnBorder(E0))
+			{
+				CellaTmp0 = subEdge0_0->Cell(0);
+				CellaTmp1 = subEdge0_1->Cell(0);
+				C0->AddCell(CellaTmp0);
+				C1->AddCell(CellaTmp1);
+			}
+			else
+			{
+				C0->AddCell(NULL);
+				C1->AddCell(NULL);
+			}
+		}
+
+		if (!E1->HasChilds())
+		{
+			subEdge1_0 = NewEdge();
+			subEdge1_1 = NewEdge();
+			SetFamily(E1, subEdge1_0, subEdge1_1);
+			SetEdgeGeometry_QuattroLati(subEdge1_0, C->Point(1), Pm1, C1);
+			SetEdgeGeometry_QuattroLati(subEdge1_1, Pm1, C->Point(2), C2);
+		}
+		else
+		{
+			subEdge1_0 = meshPointer->Edge(E1->Child(0)->Id());
+			subEdge1_1 = meshPointer->Edge(E1->Child(1)->Id());
+			subEdge1_0->AddCell(C1);
+			subEdge1_1->AddCell(C2);
+
+			if (!IsOnBorder(E1))
+			{
+				CellaTmp0 = subEdge1_0->Cell(0);
+				CellaTmp1 = subEdge1_1->Cell(0);
+				C1->AddCell(CellaTmp0);
+				C2->AddCell(CellaTmp1);
+			}
+			else
+			{
+				C1->AddCell(NULL);
+				C2->AddCell(NULL);
+			}
+		}
+
+		if (!E2->HasChilds())
+		{
+			subEdge2_0 = NewEdge();
+			subEdge2_1 = NewEdge();
+			SetFamily(E2, subEdge2_0, subEdge2_1);
+			SetEdgeGeometry_QuattroLati(subEdge2_0, C->Point(2), Pm2, C2);
+			SetEdgeGeometry_QuattroLati(subEdge2_1, Pm2, C->Point(0), C0);
+		}
+		else
+		{
+			subEdge2_0 = meshPointer->Edge(E2->Child(1)->Id());
+			subEdge2_1 = meshPointer->Edge(E2->Child(0)->Id());
+			subEdge2_0->AddCell(C2);
+			subEdge2_1->AddCell(C0);
+
+			if (!IsOnBorder(E2))
+			{
+				CellaTmp0 = subEdge2_0->Cell(0);
+				CellaTmp1 = subEdge2_1->Cell(0);
+				C2->AddCell(CellaTmp0);
+				C0->AddCell(CellaTmp1);
+			}
+			else
+			{
+				C2->AddCell(NULL);
+				C0->AddCell(NULL);
+			}
+		}
+
+		SetFamily(C, C0, C1);
+		SetFamily(C, C2, C3);
+
+		SetEdgeGeometry(median0, Pm0, Pm1, C1, C3);
+		SetEdgeGeometry(median1, Pm1, Pm2, C2, C3);
+		SetEdgeGeometry(median2, Pm2, Pm0, C0, C3);
+
+		SetCellPoints(C3, Pm0, Pm1, Pm2);
+		SetCellEdges(C3, median0, median1, median2);
+		C3->AddCell(C0);
+		C3->AddCell(C1);
+		C3->AddCell(C2);
+
+		SetCellPoints(C0, C->Point(0), Pm0, Pm2);
+		SetCellEdges(C0, subEdge0_0, median2, subEdge2_1);
+		C0->AddCell(C3);
+
+		SetCellPoints(C1, Pm0, C->Point(1), Pm1);
+		SetCellEdges(C1, subEdge0_1, subEdge1_0, median0);
+		C1->AddCell(C3);
+
+		SetCellPoints(C2, Pm1, C->Point(2), Pm2);
+		SetCellEdges(C2, subEdge1_1, subEdge2_0, median1);
+		C2->AddCell(C3);
+	}
+
+	return Output::Success;
 }
 
 } // namespace GeDiM

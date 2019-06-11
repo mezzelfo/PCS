@@ -64,12 +64,18 @@ int main(int argc, char *argv[])
 
 	/// REFINE MESH
 	TriangleRefiner refiner(mesh);
-	srand(1);
-	for (unsigned i = 0; i < mesh.NumberOfCells(); i++)
-		if (rand() % 100 < percentuale)
-			refiner.PrepareTriangle(i);
-
-	refiner.RefineMesh();
+	if (percentuale >= 100)
+	{
+		refiner.TaglioInQuattro();
+	}
+	else
+	{
+		srand(1);
+		for (unsigned i = 0; i < mesh.NumberOfCells(); i++)
+			if (rand() % 100 < percentuale)
+				refiner.PrepareTriangle(i);
+		refiner.RefineMesh();
+	}
 	refiner.AggiornaInformazioniPunti();
 
 	/// OUTPUT MESH TO MATLAB SCRIPT FOR VISUALIZATION
@@ -87,7 +93,9 @@ int main(int argc, char *argv[])
 	file << "];" << endl;
 	file << "figure;trimesh(trianglesAfter, nodesAfter(:,1), nodesAfter(:,2));" << endl;
 	file << "figure;"
-		 << "hold on;" << "trimesh(trianglesAfter, nodesAfter(:,1), nodesAfter(:,2),'color', 'r');"
-		 << "trimesh(trianglesBefore, nodesBefore(:,1), nodesBefore(:,2),'color', 'b');" << "hold off;" << endl;
+		 << "hold on;"
+		 << "trimesh(trianglesAfter, nodesAfter(:,1), nodesAfter(:,2),'color', 'r');"
+		 << "trimesh(trianglesBefore, nodesBefore(:,1), nodesBefore(:,2),'color', 'b');"
+		 << "hold off;" << endl;
 	file.close();
 }

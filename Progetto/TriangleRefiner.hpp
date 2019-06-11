@@ -80,6 +80,15 @@ private:
 		E->AddCell(left);  // LeftCell = cell[1]
 	}
 
+	// Completa le informazioni di vicinanza solo nel caso in cui si stia raffinado TUTTA la mesh
+	void SetEdgeGeometry_QuattroLati(GenericEdge *E, const GenericPoint *P0, const GenericPoint *P1, const GenericCell *cell)
+	{
+		E->AddPoint(P0);
+		E->AddPoint(P1);
+		E->InitializeCells(2);
+		E->AddCell(cell);
+	}
+
 	// Inizializza le informazioni di parentela fra un padre e due figli
 	void SetFamily(GenericTreeNode *father, GenericTreeNode *C1, GenericTreeNode *C2)
 	{
@@ -152,6 +161,9 @@ public:
 
 	// Raffina la mesh in maniera conforme
 	Output::ExitCodes RefineMesh();
+
+	// Raffina tutta la mesh
+	Output::ExitCodes TaglioInQuattro();
 };
 } // namespace GeDiM
 
