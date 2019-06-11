@@ -31,7 +31,7 @@ int main()
             size *= 2;
             vett = (struct data *)realloc(vett, size * sizeof(struct data));
         }
-        // Copio la variabile temporanea nel vettore ed incremento il numero di righe lette
+        // Copio variabile temporanea nel vettore e incremento numero di righe lette
         vett[N] = tmp;
         N++;
     }
