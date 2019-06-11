@@ -23,6 +23,8 @@ int main()
 
     // Apro file input
     fp = fopen("data_es2_input", "r");
+    if (fp == NULL)
+        return (EXIT_FAILURE);
 
     // Alloco il primo elemento della lista
     tmp = (data *)malloc(sizeof(data));
@@ -33,7 +35,7 @@ int main()
 
     // Inserimento in fondo alla lista fino a quando la lista non è vuota
     while (fscanf(fp, " %d %f %6s", &(tmp->n), &(tmp->f), tmp->s) != EOF)
-    {        
+    {
         tmp = (data *)malloc(sizeof(data));
         tmp->prec = tail;
         tmp->succ = NULL;
@@ -42,22 +44,24 @@ int main()
     }
     // il ciclo while viene eseguito una volta di troppo, quindi libero tmp aggiornando la coda
     // Ho preferito usare questo espediente in modo da poter usare fscanf direttamente sull'elemento
-    // della lista e non su una variabile d'appoggio. Questo permette di non dover copiare ogni volta la struct 
+    // della lista e non su una variabile d'appoggio. Questo permette di non dover copiare ogni volta la struct
     tail = tmp->prec;
     free(tmp);
 
     // Chiudo il file di input e apro il file di output
     fclose(fp);
     fp = fopen("data_es2_output", "w");
-
+    if (fp == NULL)
+        return (EXIT_FAILURE);
     // Visita dalla coda. Scrivo su file e libero memoria. Poi termino
     while (tail != NULL)
     {
-        fprintf(fp,"%d %f %6s\n", tail->n, tail->f, tail->s);
+        fprintf(fp, "%d %f %6s\n", tail->n, tail->f, tail->s);
         tmp = tail->prec;
         free(tail);
         tail = tmp;
     }
+    fclose(fp);
     return 0;
 }
 

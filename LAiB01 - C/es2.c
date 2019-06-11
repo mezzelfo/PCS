@@ -20,6 +20,8 @@ int main()
 
     // Apro il file di input in lettura
     fp = fopen("data_es2_input", "r");
+    if (fp == NULL)
+        return (EXIT_FAILURE);
     // Memorizzo la riga sulla variabile temporanea fino alla fine del file
     while (fscanf(fp, " %d %f %6s", &(tmp.n), &(tmp.f), tmp.s) != EOF)
     {
@@ -36,7 +38,8 @@ int main()
     // Chiudo il file di input e aptro il file di output in scrittura
     fclose(fp);
     fp = fopen("data_es2_output", "w");
-
+    if (fp == NULL)
+        return (EXIT_FAILURE);
     // Scrivo il vettore su disco iterando in senso inverso
     for (i = N - 1; i >= 0; i--)
         fprintf(fp, " %d %f %6s\n", vett[i].n, vett[i].f, vett[i].s);

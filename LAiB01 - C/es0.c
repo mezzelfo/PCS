@@ -21,14 +21,14 @@ int main()
 
 #if VERBOSITY >= 1
     for (i = 0; i < N; i++)
-        printf("Carattere %d: %c", i, vett[i]);
+        printf("Carattere %d: %c\n", i, vett[i]);
 #endif
 
     // Rigiro il vettore
     for (i = 0; i < N / 2; i++)
     {
-#if VERBOSITY >= 1
-        printf("Scambio %c con %c", vett[i], vett[N - i - 1]);
+#if VERBOSITY >= 2
+        printf("Scambio %c con %c\n", vett[i], vett[N - i - 1]);
 #endif
         // Scambio dei caratteri
         tmp = vett[i];
