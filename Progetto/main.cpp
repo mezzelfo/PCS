@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 
 	/// REFINE MESH
 	TriangleRefiner refiner(mesh);
-	if (percentuale >= 100)
+	if (percentuale == 100)
 	{
 		refiner.TaglioInQuattro();
 	}
