@@ -1,0 +1,73 @@
+# depslib dependency file v1.0
+1544093607 source:c:\users\marco\desktop\scuola\pcs\c++\laib1\poligoni\edge.cpp
+	<iostream>
+	<cmath>
+	"Edge.hpp"
+
+1544088568 c:\users\marco\desktop\scuola\pcs\c++\laib1\poligoni\edge.hpp
+	<iostream>
+	"Point2D.hpp"
+
+1544091195 c:\users\marco\desktop\scuola\pcs\c++\laib1\poligoni\point2d.hpp
+	<iostream>
+
+1544091195 source:c:\users\marco\desktop\scuola\pcs\c++\laib1\poligoni\point2d.cpp
+	<iostream>
+	<math.h>
+	"Point2D.hpp"
+
+1544120749 source:c:\users\marco\desktop\scuola\pcs\c++\laib1\poligoni\main.cpp
+	<iostream>
+	"Point2D.hpp"
+	"Edge.hpp"
+	"Polygon.hpp"
+
+1544120936 source:c:\users\marco\desktop\scuola\pcs\c++\laib1\poligoni\polygon.cpp
+	<iostream>
+	"Polygon.hpp"
+	"Utility.hpp"
+
+1544093118 c:\users\marco\desktop\scuola\pcs\c++\laib1\poligoni\polygon.hpp
+	<iostream>
+	"Edge.hpp"
+
+1544120640 c:\users\marco\desktop\scuola\pcs\c++\laib1\poligoni\utility.hpp
+	<iostream>
+	"Edge.hpp"
+
+1557656602 source:c:\users\marco\desktop\scuola\pcs\c++\ex_pcs_es-c++_2\edge.cpp
+	<iostream>
+	<cmath>
+	"Edge.hpp"
+
+1557656553 c:\users\marco\desktop\scuola\pcs\c++\ex_pcs_es-c++_2\edge.hpp
+	<iostream>
+	"Point2D.hpp"
+
+1544094796 c:\users\marco\desktop\scuola\pcs\c++\ex_pcs_es-c++_2\point2d.hpp
+	<iostream>
+
+1557658222 source:c:\users\marco\desktop\scuola\pcs\c++\ex_pcs_es-c++_2\main.cpp
+	<iostream>
+	"Point2D.hpp"
+	"Edge.hpp"
+	"Polygon.hpp"
+
+1557657404 c:\users\marco\desktop\scuola\pcs\c++\ex_pcs_es-c++_2\polygon.hpp
+	<iostream>
+	"Edge.hpp"
+
+1557656138 source:c:\users\marco\desktop\scuola\pcs\c++\ex_pcs_es-c++_2\point2d.cpp
+	<iostream>
+	<math.h>
+	"Point2D.hpp"
+
+1557658423 source:c:\users\marco\desktop\scuola\pcs\c++\ex_pcs_es-c++_2\polygon.cpp
+	<iostream>
+	"Polygon.hpp"
+	"Utility.hpp"
+
+1544124242 c:\users\marco\desktop\scuola\pcs\c++\ex_pcs_es-c++_2\utility.hpp
+	<iostream>
+	"Edge.hpp"
+
